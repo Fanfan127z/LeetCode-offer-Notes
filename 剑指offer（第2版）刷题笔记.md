@@ -4,7 +4,7 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-目前累计总共有==《15》==道题：
+目前累计总共有==《16》==道题：
 
 - [x] #### [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -724,6 +724,59 @@ public:
             // 就让cnt重新赋值为0，继续求连续和的最大值！
         }
         return res;
+    }
+};
+```
+
+
+
+- [x] #### [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
+
+  本题我是看了评论区“递归和栈两种方式解决，最好的击败了100%”的用户这个标题的大佬才do出来的！
+
+  https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/solution/di-gui-he-zhan-liang-chong-fang-shi-jie-jue-zui-ha/
+
+```c++
+// 分治递归法：(左闭右闭区间)
+// 思路：对于BST来说，后序遍历后最后一个元素必然是根节点root
+// 然后后续遍历的第一个大于root的节点到root的前一个节点这个区间内的节点必然为BST的右子树
+// 然后从前面到第一个大于root的节点的前一个节点的区间必然是BST的左子树
+// 即：[left,第一个大于当前root节点-1]是BST的左子树区间
+//    [第一个大于当前root节点,root节点-1]是BST的右子树区间
+// 若不满足以上的2个条件的话，就一定不是BST了！
+class Solution {
+public:
+    bool traversal(const vector<int>& p,int l,int r){
+        if(l >= r)return true;
+        int fenGeIdx = l;
+        int curRoot = p[r];// 因为BST的后续遍历最后一个节点值肯定是当前根节点的值！so直接取p[r]==root
+        while(p[fenGeIdx] < curRoot)fenGeIdx++;
+        /*
+            因为要确认当前的[第一个大于当前root节点,root节点-1]区间必须都要大于curRoot值
+            才能确定是BST当前根节点curRoot的右子树！
+            若有小于curRoot值的就马上return false表示不是BST了！
+        */
+        int tmp = fenGeIdx;
+        while(tmp < r){// 右子树但凡有小于root的马上判断不是BST
+            if(p[tmp++] < curRoot)return false;
+        }
+        /*
+            同上理，要确定[left,第一个大于当前root节点-1]是BST的左子树区间这个区间的all节点值
+            都要小于当前根节点curRoot的值！才符合BST！
+        */
+        tmp = fenGeIdx - 1;
+        while(tmp >= l){// 左子树但凡有大于root的马上判断不是BST
+            if(p[tmp--] > curRoot)return false;
+        }
+        // 判断左子树是否为BST
+        bool leftIsBST = traversal(p,l,fenGeIdx-1);
+        // 判断右子树是否为BST
+        bool rightIsBST = traversal(p,fenGeIdx,r-1);
+        // 进而判断整棵树是否为BST
+        return leftIsBST && rightIsBST;
+    }
+    bool verifyPostorder(vector<int>& postorder) {
+        return traversal(postorder,0,postorder.size()-1);
     }
 };
 ```
