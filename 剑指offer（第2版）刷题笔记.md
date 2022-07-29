@@ -4,7 +4,7 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-目前累计总共有==《16》==道题：
+目前累计总共有==《22》==道题：
 
 - [x] #### [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -780,4 +780,178 @@ public:
     }
 };
 ```
+
+
+
+- [x] #### [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode.cn/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
+
+#### [113. 路径总和 II](https://leetcode.cn/problems/path-sum-ii/)
+
+这两个题目是一毛一样的呀！我自己还是在carl哥的代码随想录的二叉树系列刷了很多次了的！！！还是没法完整写出来！
+
+```c++
+class Solution {
+public:
+    // 分析：因为我们此时要找出所有从根节点到叶子节点路径总和==给定目标和的路径
+    // 因此我们必须要遍历整一颗二叉树，因此递归函数不需要返回值
+    // 用递归函数从前到后用前序遍历的思路来do就符合找根节点到叶子节点的路径的思路了！
+    // 这个思路来自carl哥的代码随想录！
+    void traversal(TreeNode* cur,vector<int>& tpath,vector<vector<int>>& path,int tar){
+        // 整体上是用到前序遍历 :中 左 右的logic来遍历二叉树的！
+        if(!cur->left && !cur->right){
+            // 遍历到根节点才算一个有效路径
+            // 然后再看看是否符合路径和==目标和！
+            if(tar == 0){
+                path.push_back(tpath);
+                return;// 符合目标和就加入结构路径path中，并继续遍历其他路径
+            }else return;// 不符合，就继续回溯遍历其他路径
+        }
+        if(cur->left){
+            // 处理当前节点
+            tar -= cur->left->val;
+            tpath.push_back(cur->left->val);
+            // 继续递归
+            traversal(cur->left,tpath,path,tar);
+            // 回溯
+            tar += cur->left->val;
+            tpath.pop_back();
+        }
+        if(cur->right){
+            // 处理当前节点
+            tar -= cur->right->val;
+            tpath.push_back(cur->right->val);
+            // 继续递归
+            traversal(cur->right,tpath,path,tar);
+            // 回溯
+            tar += cur->right->val;
+            tpath.pop_back();
+        }
+    }
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        if(root == nullptr)return {};
+        vector<int> tpath;
+        vector<vector<int>> path;
+        tpath.push_back(root->val);// 不论如何你的整棵树的根节点root一定是先要加入到路径中的
+        // 因为你题目说了，根节点到叶子节点的路径才算完整de有效路径！
+        traversal(root,tpath,path,targetSum - root->val);
+        return path;
+    }
+};
+```
+
+
+
+- [x] #### [剑指 Offer 30. 包含min函数的栈](https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/)
+
+#### [155. 最小栈](https://leetcode.cn/problems/min-stack/)
+
+又是一个我在carl哥那刷过很多次的题目，我没有再次写出来！
+
+```c++
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    stack<pair<int,int>> stk;
+    // stk存储的是一个队组，first表示元素值，second表示当前栈中存储的元素值中的最小值！
+    MinStack() {
+        
+    }
+    void push(int x) {
+        if(stk.empty()){
+            stk.push(pair<int,int>(x,x));
+        }else{
+            stk.push(pair<int,int>(x,std::min(x,stk.top().second)));
+            // 因为与本结构中的成员函数min有重名，因此要加上std::调用标准的名字空间中的min来do区分！
+        }
+    }
+    void pop() {
+        if(stk.empty())return;
+        stk.pop();
+    }
+    int top() {
+        // 要是只用一个普通的stack<int>栈的话就不能正确弄出原本加入到top值！
+        if(stk.empty())return -1;
+        return stk.top().first;
+    }
+    int min() {
+        if(stk.empty())return -1;
+        return stk.top().second; 
+    }
+};
+```
+
+
+
+- [x] #### [剑指 Offer 68 - II. 二叉树的最近公共祖先](https://leetcode.cn/problems/er-cha-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+
+#### [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+这又是一道我在carl哥那刷过的题目，但是我忘记怎么做了！
+
+```c++
+class Solution {
+public:
+    /* 
+    思路：求BT的最近公共祖先，就必须要想到要用回溯法！也即后续遍历BT的logic
+        从下往上遍历！当 当前节点是空or p or q时直接返回cur
+        然后遍历其左右子树
+        当左右都不空，说明当前节点就是最近公共祖先，直接返回即可
+        当左空右不空，说明最近公共祖先节点会由右子树直接返回
+        当左不空右空，说明最近公共祖先节点会由左子树直接返回
+        当左右都为空，直接返回左or右，此时没有在以当前cur节点为根节点的树的左右子树中找到公共祖先节点
+        so直接返回nullptr
+    */
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root == nullptr || root == q || root == p)return root;
+        TreeNode* left = lowestCommonAncestor(root->left,p,q);
+        TreeNode* right = lowestCommonAncestor(root->right,p,q);
+        if(left && right)return root;
+        else if(left && !right)return left;
+        else if(!left && right)return right;
+        return right; 
+    }
+};
+```
+
+
+
+- [x] #### [剑指 Offer 68 - I. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+
+#### [235. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+这还是一道我在carl哥那刷过的题目，但是我忘记怎么做了！
+
+```c++
+// way1：迭代法求BST的最近公共祖先节点！
+// 这里利用了BST的节点的值的有序性！左->val < 根->val < 右->val <==> 根是左和右的最近公共祖先节点了！
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root == nullptr)return root;
+        while(root){
+            if(root->val < p->val && root->val < q->val){
+                root = root->right;// 去右边找最近公共祖先节点！
+            }else if(root->val > p->val && root->val > q->val){
+                root = root->left;// 去左边找最近公共祖先节点！
+            }else return root;// 当前节点就是p和q的最近公共祖先节点了！
+        }
+        return nullptr;// 迭代找不到最近公共祖先节点的话就直接返回空nullptr即可！
+    }
+};
+// way2：当然你也可以把BST当作是普通二叉树那样，用递归来求最近公共祖先节点！
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root == nullptr || root == q || root == p)return root;// 空节点的最近公共祖先肯定也是空节点！    
+        TreeNode* left = lowestCommonAncestor(root->left,p,q);
+        TreeNode* right = lowestCommonAncestor(root->right,p,q);
+        if(left && right)return root;
+        else if(left && !right)return left;
+        else if(!left && right)return right;
+        return left;
+    }
+};
+```
+
+
 
