@@ -4,9 +4,9 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-目前累计总共有==《22》==道题：
+### 目前累计总共有==《22》==道题：
 
-- [x] #### [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
+#### <1> [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
 题解：
 
@@ -27,7 +27,7 @@ public:
 };
 ```
 
-- [x] #### [LeetCode 剑指offer 25.合并两个排序的链表：](https://leetcode.cn/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/)
+#### <2> [LeetCode 剑指offer 25.合并两个排序的链表：](https://leetcode.cn/problems/he-bing-liang-ge-pai-xu-de-lian-biao-lcof/)
 
 题解：
 
@@ -93,7 +93,7 @@ public:
 };
 ```
 
-- [x] #### [LeetCode 剑指offer 31.栈的压入、弹出序列：](https://leetcode.cn/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
+#### <3> [LeetCode 剑指offer 31.栈的压入、弹出序列：](https://leetcode.cn/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/)
 
 （这个题目我想到了lc高赞答案的题解了，但是没有自己写出来！）
 
@@ -130,7 +130,7 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指offer 50.第一个只出现一次的字符：](https://leetcode.cn/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
+#### <4> [LeetCode 剑指offer 50.第一个只出现一次的字符：](https://leetcode.cn/problems/di-yi-ge-zhi-chu-xian-yi-ci-de-zi-fu-lcof/)
 
 ```c++
 // 暴力法的话就太tmd简单了（这里就不写了，也就2层for循环就可以暴力出来了！）！
@@ -166,11 +166,11 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指offer 35.复杂链表的复制：](https://leetcode.cn/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
+#### <5> [LeetCode 剑指offer 35.复杂链表的复制：](https://leetcode.cn/problems/fu-za-lian-biao-de-fu-zhi-lcof/)
 
-  这是lc剑指offer板块中的==评论区高赞大佬Krahets==教我的题解：
+这是lc剑指offer板块中的==评论区高赞大佬Krahets==教我的题解：
 
-  ![lc剑指offer35](F:\学习过程中的截图\lc剑指offer35.png)
+![lc剑指offer35](F:\学习过程中的截图\lc剑指offer35.png)
 
 ```c++
 // time:O(n)
@@ -204,7 +204,7 @@ public:
 };
 ```
 
-- [x] #### [LeetCode 剑指offer 54.二叉搜索树的第k大节点：](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/)
+#### <6> [LeetCode 剑指offer 54.二叉搜索树的第k大节点：](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/)
 
 ```c++
 /**
@@ -242,9 +242,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指offer 55II.平衡二叉树：](https://leetcode.cn/problems/ping-heng-er-cha-shu-lcof/)
+#### <7> [LeetCode 剑指offer 55II.平衡二叉树：](https://leetcode.cn/problems/ping-heng-er-cha-shu-lcof/)
 
-  这道题目为在carl哥的网站上刷了N次了，但是刷剑指offer时候还是有点陌生，==中途遍历到发现左右子树是非平衡就直接返回-1表示整棵树是非平衡这2行代码为没有写出来！！！==
+这道题目为在carl哥的网站上刷了N次了，但是刷剑指offer时候还是有点陌生，==中途遍历到发现左右子树是非平衡就直接返回-1表示整棵树是非平衡这2行代码为没有写出来！！！==
 
 ```c++
 /**
@@ -281,7 +281,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指offer 56I.数组中数字出现的次数](https://leetcode.cn/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+#### <8> [LeetCode 剑指offer 56I.数组中数字出现的次数](https://leetcode.cn/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+
 
 ```c++
 // time:O(n)
@@ -321,7 +323,7 @@ public:
 
 ==LRU算法（大厂面试很喜欢出的一个题目！！！）：==
 
-#### [LeetCode 剑指 Offer II 031. 最近最少使用缓存](https://leetcode.cn/problems/OrIXps/)
+#### <9> [LeetCode 剑指 Offer II 031. 最近最少使用缓存](https://leetcode.cn/problems/OrIXps/)
 
 这个思路为是跟着b站一个小up主学的
 网站：https://www.bilibili.com/video/BV18A411i7ui?spm_id_from=333.337.search-card.all.click&vd_source=b050ab0adaffa51f5ad24d77efa40057
@@ -453,7 +455,7 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 66.构建乘积数组](https://leetcode.cn/problems/gou-jian-cheng-ji-shu-zu-lcof/)
+#### <10> [LeetCode 剑指 Offer 66.构建乘积数组](https://leetcode.cn/problems/gou-jian-cheng-ji-shu-zu-lcof/)
 
 ```c++
 /*
@@ -492,9 +494,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 57.和为s的两个数字](https://leetcode.cn/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
+#### <11> [LeetCode 剑指 Offer 57.和为s的两个数字](https://leetcode.cn/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
 
-  这道题目给我的启示：以后我自己刷题时一看到题目中==有已经排序过后数组==就要马上想起来用==双指针法！试一试看能不能deal题目！==
+这道题目给我的启示：以后我自己刷题时一看到题目中==有已经排序过后数组==就要马上想起来用==双指针法！试一试看能不能deal题目！==
 
 ```c++
 /*
@@ -521,9 +523,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 57 - II.和为s的连续正数序列](https://leetcode.cn/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+#### <12> [LeetCode 剑指 Offer 57 - II.和为s的连续正数序列](https://leetcode.cn/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
 
-  这个题目的==第一种暴力解法==是纯纯我自己想的回溯法do出来的！（暴力回溯搜索法！so虽然在LC上能够通过，但是时间和空间复杂度非常地不咋地！）
+这个题目的==第一种暴力解法==是纯纯我自己想的回溯法do出来的！（暴力回溯搜索法！so虽然在LC上能够通过，但是时间和空间复杂度非常地不咋地！）
 
 
 ```c++
@@ -564,9 +566,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 58 - I.翻转单词顺序](https://leetcode.cn/problems/fan-zhuan-dan-ci-shun-xu-lcof/)
+#### <13> [LeetCode 剑指 Offer 58 - I.翻转单词顺序](https://leetcode.cn/problems/fan-zhuan-dan-ci-shun-xu-lcof/)
 
-  这个题目我之前2刷过carl哥的网站的题（lcT151），但是为忘记如何用双指针来do这个题目了！也就是说我虽然二刷了carl哥的除dp之外的题目，但是还是不能全覆盖地记住如何deal这些问题！
+这个题目我之前2刷过carl哥的网站的题（lcT151），但是为忘记如何用双指针来do这个题目了！也就是说我虽然二刷了carl哥的除dp之外的题目，但是还是不能全覆盖地记住如何deal这些问题！
 
 ```c++
 class Solution {
@@ -598,9 +600,9 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 61 .扑克牌中的顺子](https://leetcode.cn/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
+#### <14> [LeetCode 剑指 Offer 61 .扑克牌中的顺子](https://leetcode.cn/problems/bu-ke-pai-zhong-de-shun-zi-lcof/)
 
-  这个题目我是完全没有题解的思路，我自己的思路没法deal特殊case！不缺全面！很难想到这个题目的思路！真的！
+这个题目我是完全没有题解的思路，我自己的思路没法deal特殊case！不缺全面！很难想到这个题目的思路！真的！
 
 ```c++
 // 这个顺子的题目总体的思路就是：
@@ -630,7 +632,7 @@ public:
 
 
 
-- [x] #### [LeetCode 剑指 Offer 64 .其1+2+...+n](https://leetcode.cn/problems/qiu-12n-lcof/)
+#### <15> [LeetCode 剑指 Offer 64 .其1+2+...+n](https://leetcode.cn/problems/qiu-12n-lcof/)
 
 这个题目我是完全没有想到不用if else while for switch case还有啥能do出来
 
@@ -659,13 +661,13 @@ public:
 
 
 
-- [x] #### [剑指 Offer 67. 把字符串转换成整数](https://leetcode.cn/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/)
+#### <16> [剑指 Offer 67. 把字符串转换成整数](https://leetcode.cn/problems/ba-zi-fu-chuan-zhuan-huan-cheng-zheng-shu-lcof/)
 
-  这道题目其实我自己想的差不多了，就是差一点点判断越界的细节没想出来而已！
+这道题目其实我自己想的差不多了，就是差一点点判断越界的细节没想出来而已！
 
-  然后==参考了lc评论区的一个视频==，是B站up主https://www.bilibili.com/video/BV1mY411c7XJ/?vd_source=b050ab0adaffa51f5ad24d77efa40057的视频！然后才完全写出来的！
+然后==参考了lc评论区的一个视频==，是B站up主https://www.bilibili.com/video/BV1mY411c7XJ/?vd_source=b050ab0adaffa51f5ad24d77efa40057的视频！然后才完全写出来的！
 
-  这道题目其实和[lc8. 字符串转换整数 (atoi)](https://leetcode.cn/problems/string-to-integer-atoi/)是一样的！复制黏贴过去也能AC！！！
+这道题目其实和[lc8. 字符串转换整数 (atoi)](https://leetcode.cn/problems/string-to-integer-atoi/)是一样的！复制黏贴过去也能AC！！！
 
 ```c++
 class Solution {
@@ -705,9 +707,9 @@ public:
 
 
 
-- [x] #### [剑指 Offer 42. 连续子数组的最大和](https://leetcode.cn/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
+#### <17> [剑指 Offer 42. 连续子数组的最大和](https://leetcode.cn/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
 
-  这个题目和[lc53. 最大子数组和](https://leetcode.cn/problems/maximum-subarray/)是一毛一样的解题思路！我之前在carl哥那do过2次了，但是这次还是没有记住怎么do！
+这个题目和[lc53. 最大子数组和](https://leetcode.cn/problems/maximum-subarray/)是一毛一样的解题思路！我之前在carl哥那do过2次了，但是这次还是没有记住怎么do！
 
 ```c++
 // time:O(n),n是原数组nums的大小！
@@ -730,11 +732,11 @@ public:
 
 
 
-- [x] #### [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
+#### <18> [剑指 Offer 33. 二叉搜索树的后序遍历序列](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/)
 
-  本题我是看了评论区“递归和栈两种方式解决，最好的击败了100%”的用户这个标题的大佬才do出来的！
+本题我是看了评论区“递归和栈两种方式解决，最好的击败了100%”的用户这个标题的大佬才do出来的！
 
-  https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/solution/di-gui-he-zhan-liang-chong-fang-shi-jie-jue-zui-ha/
+https://leetcode.cn/problems/er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof/solution/di-gui-he-zhan-liang-chong-fang-shi-jie-jue-zui-ha/
 
 ```c++
 // 分治递归法：(左闭右闭区间)
@@ -783,9 +785,9 @@ public:
 
 
 
-- [x] #### [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode.cn/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
+#### <19> [剑指 Offer 34. 二叉树中和为某一值的路径](https://leetcode.cn/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/)
 
-#### [113. 路径总和 II](https://leetcode.cn/problems/path-sum-ii/)
+##### [113. 路径总和 II](https://leetcode.cn/problems/path-sum-ii/)
 
 这两个题目是一毛一样的呀！我自己还是在carl哥的代码随想录的二叉树系列刷了很多次了的！！！还是没法完整写出来！
 
@@ -841,9 +843,9 @@ public:
 
 
 
-- [x] #### [剑指 Offer 30. 包含min函数的栈](https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/)
+#### <20> [剑指 Offer 30. 包含min函数的栈](https://leetcode.cn/problems/bao-han-minhan-shu-de-zhan-lcof/)
 
-#### [155. 最小栈](https://leetcode.cn/problems/min-stack/)
+##### [155. 最小栈](https://leetcode.cn/problems/min-stack/)
 
 又是一个我在carl哥那刷过很多次的题目，我没有再次写出来！
 
@@ -882,9 +884,9 @@ public:
 
 
 
-- [x] #### [剑指 Offer 68 - II. 二叉树的最近公共祖先](https://leetcode.cn/problems/er-cha-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+#### <21> [剑指 Offer 68 - II. 二叉树的最近公共祖先](https://leetcode.cn/problems/er-cha-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
 
-#### [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
+##### [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
 
 这又是一道我在carl哥那刷过的题目，但是我忘记怎么做了！
 
@@ -915,9 +917,9 @@ public:
 
 
 
-- [x] #### [剑指 Offer 68 - I. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
+#### <22> [剑指 Offer 68 - I. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-lcof/)
 
-#### [235. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+##### [235. 二叉搜索树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/)
 
 这还是一道我在carl哥那刷过的题目，但是我忘记怎么做了！
 
@@ -954,4 +956,90 @@ public:
 ```
 
 
+
+#### <23> [剑指 Offer 26. 树的子结构](https://leetcode.cn/problems/shu-de-zi-jie-gou-lcof/)
+
+*学的这个lc题目评论区的高赞答案写的！！！太NB了！可太难想了这个思路！*
+
+==思路：==
+
+1- 先在树A中找到头结点 == 树B头结点的节点
+
+2- 找到之后再将此时的A子结构的left和right 与 B的left和right逐个do队比，即可判断A是否含有B这样的子结构了！
+
+```c++
+class Solution {
+public:
+    bool isSubStructure(TreeNode* A, TreeNode* B) {
+        if(A == nullptr || B == nullptr)return false;// 空子树不是任何一棵树的子结构
+        if(A->val == B->val){// 只有找到同一个根节点时才能接下去判断是否匹配的问题！
+            if(traversal(A,B))return true;
+        }
+        // A的左orright 只有含有B这样的结构就都算是true
+        return isSubStructure(A->left,B) || isSubStructure(A->right,B);
+    }
+    // 下面这个子函数是判断这2个可能的子结构A和B到底是否是匹配的
+    bool traversal(TreeNode* A,TreeNode* B){
+        if(B == nullptr)return true;// 若判断出B遍历完成了，那肯定子结构A与B相互匹配了！
+        if(A == nullptr || A->val != B->val)return false;
+        // 若判断出A遍历完成了(到A的叶子节点了，再往该节点的左右遍历都是空了)
+        // or 说遍历到当前A的子结构该节点的值！=B对应节点的值，那肯定子结构A与B相互不匹配了！
+        // 此时就是A子结构的当前节点和B的对应节点值相等的case，就继续递归遍历其他节点的值
+        // 看是否匹配！
+        return traversal(A->left,B->left) && traversal(A->right,B->right);
+    }
+};
+```
+
+
+
+#### <24> [剑指 Offer 16. 数值的整数次方](https://leetcode.cn/problems/shu-zhi-de-zheng-shu-ci-fang-lcof/)
+
+##### [50. Pow(x, n)](https://leetcode.cn/problems/powx-n/)这个lc50也同上！是同一个题目！
+
+本题的方法被称为==「快速幂算法」==!我学自lc官方题解区的官方视频题解！！！忘了就回看一下官方给出的视频讲解即可！https://leetcode.cn/problems/powx-n/solution/powx-n-by-leetcode-solution/
+
+==快速幂次算法==本质就是==分治算法==，时间复杂度就是O（logn）的！
+
+思路：
+
+分治算法：（通过下面这2个例子详细你自己也能够悟出来的了！）
+
+x ^16 <=> x^16 -> x^8 * x^8 -> x^4 * x^4 * x^4 * x^4  ->  x^2 * x^2 * x^2 * x^2 * x^2 * x^2 * x^2 * x^2
+
+x ^20 <=> x^20 -> x^10 * x^10-> x^5 * x^5 * x^5 * x^5 ->  x^2 * x^2 * x *x^2 * x^2 * x
+
+然后思路就是递归分治！（若是理解了上面这2个例子要写出递归分治的codes不难了！）
+
+当n < 0时，取result == 1.0 / pow(x,abs(n));
+
+当n >= 0时，取result == pow(x,n);
+
+```c++
+// 时间：O(logn)，递归的层数
+// 空间：O(logn)，递归的层数，这是由于递归的函数调用会使用栈空间。
+class Solution {
+public:
+    double myPowHelper(double x, uint32_t n) {
+        // uint32_t来表示n才能不越界！NB！！！当然你甚至可以用uint64_t也ok！
+        if(n == 0)return 1.0;// 当n递减到0时就代表x到最后了！就直接x个1.0完事了！
+        if(n % 2 != 0){
+            double half = myPowHelper(x,n / 2);
+            return half * half * x;
+        }else{
+            double half = myPowHelper(x,n / 2);
+            return half * half;
+        }
+    }
+    double myPow(double x,int n){
+        // 必须要考虑到n == 0 和 x == 1时这种特殊case！
+        if(n == 0 || x == 1)return 1;
+        // 任何数的0次方 or 1的任何次方都 == 1！
+        if(n < 0){
+            return 1.0 / myPowHelper(x,abs(n));
+        }
+        return myPowHelper(x,n);
+    }
+};
+```
 
