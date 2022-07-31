@@ -4,7 +4,7 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-### 目前累计总共有==《22》==道题：
+### 目前累计总共有==《25》==道题：
 
 #### <1> [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -1039,6 +1039,142 @@ public:
             return 1.0 / myPowHelper(x,abs(n));
         }
         return myPowHelper(x,n);
+    }
+};
+```
+
+#### <25> [剑指 Offer 07. 重建二叉树](https://leetcode.cn/problems/zhong-jian-er-cha-shu-lcof/)
+
+这个题目我在carl哥那也刷了N遍了，但是还是不会do！那就背下来把！！！
+
+```c++
+ /*
+    思路：先（每次递归都用前序的第一个元素来）切割中序，后（每次递归都用中序左的size来）切割前序列
+    		[3 9 20 15 7]
+            [9 3 15 20 7]
+            /           \ 
+           [9]          [20 15 7]    
+           [9]          [15 20 7]
+                       /        \
+                     [15]     [7]
+                     [15]     [7]
+ */
+class Solution {
+public:
+    TreeNode* traversal(vector<int>& preorder, vector<int>& inorder) {
+        int size = preorder.size();
+        if(size == 0)return nullptr;
+        TreeNode* root = new TreeNode(preorder[0]);
+        if(size == 1)return root;
+        // 先切割中序(按照左开右闭原则)
+        int qiegeIdx = -1;
+        for(int i = 0;i < inorder.size();++i){
+            if(inorder[i] == preorder[0]){
+                qiegeIdx = i;break;
+            }
+        }
+        vector<int> leftInorder(inorder.begin(),inorder.begin()+qiegeIdx);
+        vector<int> rightInorder(inorder.begin()+qiegeIdx+1,inorder.end());
+        // 后切割前序(按照左开右闭原则)
+        preorder.erase(preorder.begin(),preorder.begin()+1);// 先物理删除用过的前序第一个元素值（当前根节点值）
+        int leftInorderSize = leftInorder.size();
+        vector<int> leftPreorder(preorder.begin(),preorder.begin()+leftInorderSize);
+        vector<int> rightPreorder(preorder.begin()+leftInorderSize,preorder.end());
+        // 用递归函数返回值do重新构造二叉树的工作！
+        root->left = traversal(leftPreorder,leftInorder);// 继续构造左子树
+        root->right = traversal(rightPreorder,rightInorder);// 继续构造右子树
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        if(preorder.size() == 0 || inorder.size() == 0)return nullptr;
+        return traversal(preorder,inorder); 
+    }
+};
+```
+
+
+
+下面这个题目与上面的思路类似：
+
+##### [106. 从中序与后序遍历序列构造二叉树](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+
+```c++
+ /*
+    思路：先（每次递归都用后序的last一个元素来）切割中序，后（每次递归都用中序左的size来）切割后序列
+            [9 3 15 20 7]
+            [9 15 7 20 3]
+            /           \ 
+           [9]          [15 20 7]    
+           [9]          [15 7 20]
+                       /        \
+                     [15]      [7]
+                     [15]      [7]
+ */
+class Solution {
+public:
+    TreeNode* traversal(vector<int>& inorder, vector<int>& postorder){
+        int size = postorder.size();
+        if(size == 0)return nullptr;
+        TreeNode* root = new TreeNode(postorder[size-1]);
+        if(size == 1)return root;
+        // 若当前序列数组只有一个元素，就直接返回把！不用继续递归构建BT了！
+        // 先切割中序
+        // 1:找切割中序的切割点
+        int qiegeIdx = -1;
+        for(int i = 0;i < inorder.size();++i){
+            if(inorder[i] == root->val){
+                qiegeIdx = i;break;
+            }
+        }
+        // 2:切割中序(以左闭右开原则)
+        vector<int> leftInorder(inorder.begin(),inorder.begin()+qiegeIdx);
+        vector<int> rightInorder(inorder.begin()+qiegeIdx+1,inorder.end());
+        // 后切割后序(以左闭右开原则)
+        postorder.resize(postorder.size()-1);// 物理上pop掉最后一个用过的元素值（是当前根节点）
+        vector<int> leftPostorder(postorder.begin(),postorder.begin()+leftInorder.size());
+        vector<int> rightPostorder(postorder.begin()+leftInorder.size(),postorder.end());
+        // 利用递归函数返回值do重新构造二叉树的工作
+        root->left = traversal(leftInorder,leftPostorder);
+        root->right = traversal(rightInorder,rightPostorder);
+        return root; 
+    }
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        if(inorder.size() == 0 || postorder.size() == 0)return nullptr;
+        return traversal(inorder,postorder);
+    }
+};
+```
+
+
+
+#### <26> [剑指 Offer 43. 1～n 整数中 1 出现的次数](https://leetcode.cn/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
+
+这个困难题目就当让我长长见识得了！太难了！说实话面试要是遇到了那也只能G了！
+
+```c++
+// 这个题目我是看的b站up主香辣鸡排蛋包饭才知道这么do的！
+// 但是这也太难了吧,我说实话，只能把这种思路完全记忆背下来才能默写出来！
+/*
+    time:O(1),就算是百万位的数字，也只有需要遍历7次，因为只有7位的数字！O(7) == O(1)
+    space:O(1)
+*/
+class Solution {
+   public:
+    int countDigitOne(int n) {
+        int res = 0;// 保存结果
+        long base = 1;// 从个位开始统计
+        // 对于数字n，要 求从1~n的all数字中出现'1'的次数 == 求sum(各个位数上面出现的'1'的次数)
+        while(base <= n){
+            int a = n / base / 10;
+            int b = n % base;
+            int cur = n / base % 10;
+            if(cur > 1){
+                res += (a+1)*base;
+            }else if(cur == 1)res += a*base + b + 1;
+            else res += a*base;
+            base *= 10;// 依次统计各个位置上到‘1’出现的次数！
+        }
+        return res;
     }
 };
 ```
