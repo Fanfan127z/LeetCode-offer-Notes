@@ -1240,6 +1240,8 @@ public:
 
 补充：==归并排序模板==
 
+归并排序B站大佬讲解的video：https://www.bilibili.com/video/BV1Pt4y197VZ?spm_id_from=333.337.search-card.all.click&vd_source=b050ab0adaffa51f5ad24d77efa40057
+
 ```c++
 // 1-Cpp版归并排序模板：
 #include<iostream>
