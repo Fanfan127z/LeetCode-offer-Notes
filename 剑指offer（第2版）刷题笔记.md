@@ -4,7 +4,7 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-### 目前累计总共有==《25》==道题：
+### 目前累计总共有==《27》==道题：
 
 #### <1> [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -1177,5 +1177,186 @@ class Solution {
         return res;
     }
 };
+```
+
+
+
+#### <27> [剑指 Offer 51. 数组中的逆序对](https://leetcode.cn/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+
+这道题目虽然是困难级别的，但还是能做的，不像上面<26>题那样变态！！！虽说也挺难想的，但是我做这个题目的同时也复习了一下归并排序如何写！so这个题目还是值得一做的！
+
+==这道题目主要参考的是B站up主：香辣鸡排蛋包饭的video讲解！==
+
+https://www.bilibili.com/video/BV1CK411c7gx?p=45&vd_source=b050ab0adaffa51f5ad24d77efa40057
+
+还有一篇lc题解区的小题解：
+
+https://leetcode.cn/problems/shu-zu-zhong-de-ni-xu-dui-lcof/solution/jian-zhi-offer-51-shu-zu-zhong-de-ni-xu-a80cq/
+
+```c++
+/*
+    考察的知识点：归并排序模板默写的同时，统计逆序对！
+    归并排序会将数组各个元素值do升序排序（默认），同时我们再统计一下逆序对即可over 本题了！
+    当有 ：if(nums[l_pos] > nums[r_pos])时，马上让 res += (mid - l_pos + 1);即可统计逆序对了！
+*/
+class Solution {
+private:
+    int res = 0;
+public:
+    int reversePairs(vector<int>& nums) {
+        //使用归并排序法来do这道题目！
+        vector<int> tmp;
+        int size = nums.size();
+        tmp.resize(size);// 必须要提前resize，否则lc就是会给你判错！
+        if(size == 0 || size == 1)return 0;// 特殊case，此时没有逆序对
+        mergeSort(nums,0,size-1,tmp);
+        return res;
+    }
+    void mergeSort(vector<int>& nums,int left,int right,vector<int>& tmp){
+        if(left >= right)return;// 一个元素本身就是有序的了！
+        int mid = left + (right - left) / 2;
+        // 递归分割左区间
+        mergeSort(nums,left,mid,tmp);
+        // 递归分割右区间
+        mergeSort(nums,mid+1,right,tmp);
+        // 合并,同时统计逆序对的个数res
+        merge(nums,left,mid,right,tmp);
+    }
+    void merge(vector<int>& nums,int left,int mid,int right,vector<int>& tmp){
+        int l_pos = left,r_pos = mid+1,pos = left;
+        while(l_pos <= mid && r_pos <= right){
+            if(nums[l_pos] <= nums[r_pos])tmp[pos++] = nums[l_pos++];
+            else {
+                res += (mid - l_pos+1);// 在Cpp版本的归并排序模板中就写这一句代码就能通过此题！
+                tmp[pos++] = nums[r_pos++];
+            }
+        }
+        while(l_pos <= mid)tmp[pos++] = nums[l_pos++];
+        while(r_pos <= right)tmp[pos++] = nums[r_pos++];
+        for(int i = left;i <= right;++i)nums[i] = tmp[i];
+    }
+};
+```
+
+补充：==归并排序模板==
+
+```c++
+// 1-Cpp版归并排序模板：
+#include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<vector>
+#include<algorithm>
+using namespace std;
+void merge(vector<int>& nums,int left,int mid,int right,vector<int>& tmp){
+    int l_pos = left,r_pos = mid+1,pos = left;
+    while(l_pos <= mid && r_pos <= right){
+        if(nums[l_pos] <= nums[r_pos]){
+            tmp[pos++] = nums[l_pos++];
+        }
+        else {
+            tmp[pos++] = nums[r_pos++];
+        }
+    }
+    while(l_pos <= mid)tmp[pos++] = nums[l_pos++];
+    while(r_pos <= right)tmp[pos++] = nums[r_pos++];
+    for(int i = left;i <= right;++i)nums[i] = tmp[i];
+}
+void mergeSort(vector<int>& nums,int left,int right,vector<int>& tmp){
+    if(left >= right)return;// 一个元素本身就是有序的了！
+    int mid = left + (right - left) / 2;
+    // 递归分割左区间
+    mergeSort(nums,left,mid,tmp);
+    // 递归分割右区间
+    mergeSort(nums,mid+1,right,tmp);
+    // 合并
+    merge(nums,left,mid,right,tmp);
+}
+void print(const vector<int>& nums){
+    for_each(nums.begin(),nums.end(),[](int v){cout<<v<<"\t";});
+    cout<<endl;
+}
+int main(int argc,char* argv[]){
+    vector<int> nums{9,5,2,7,12,4,3,1,11};// {7,5,6,4};
+    vector<int> tmp;
+    tmp.resize(nums.size());
+    print(nums);
+    mergeSort(nums,0,nums.size()-1,tmp);
+    print(nums);
+    return 0;
+}
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+// 2-C语言版归并排序模板：
+#include<stdio.h>
+#include<stdlib.h>
+void print(int * arr,int n){
+    for(int i = 0;i < n;++i){
+        printf("%d\t",arr[i]);
+    }
+    printf("\n");
+}
+// 合并函数
+void merge(int* arr,int* tmpArr,int left,int mid,int right)
+{
+    // 标记左半区第一个未排序的元素de index
+    int l_pos = left;
+    // 标记右半区第一个未排序的元素de index
+    int r_pos = mid + 1;
+    // 临时数组元素的下标
+    int pos = left;
+    // 合并
+    while(l_pos <= mid && r_pos <= right){
+        if(arr[l_pos] < arr[r_pos]){
+            tmpArr[pos++] = arr[l_pos++];
+        }else{
+            tmpArr[pos++] = arr[r_pos++];
+        }
+    }
+    // 合并左半区剩余的元素
+    while(l_pos <= mid){
+        tmpArr[pos++] = arr[l_pos++];
+    }
+    // or合并右半区剩余的元素
+    while(r_pos <= right){
+        tmpArr[pos++] = arr[r_pos++];
+    }
+    // 把临时数组中合并后的元素复制回原来的数组
+    for(int i = 0;i <= right;++i){
+        arr[i] = tmpArr[i];
+    }
+}
+// 归并排序的实质函数
+void msort(int * arr,int * tmpArr,int left,int right){
+    // 如果只有一个元素的区域就不需要继续划分了
+    // 只需要被归并，因为一个元素的区域本身就是有序的了！无需排序了！
+    if(left >= right)return;
+    // 找中间点
+    int mid = left + (right - left) / 2;
+    // 递归划分左半区域
+    msort(arr,tmpArr,left,mid);
+    // 递归划分右半区域
+    msort(arr,tmpArr,mid+1,right);
+    // 合并已经排好序的部分区域
+    merge(arr,tmpArr,left,mid,right);
+}
+// 归并排序的入口函数
+void merge_sort(int * arr,int n){
+    int* tmpArr = (int*)malloc(n * sizeof(int));
+    if(tmpArr){
+        msort(arr,tmpArr,0,n-1);
+        free(tmpArr);
+    }else{
+        printf("error,failed to allocate tmp memory!\n");
+    }
+}
+int main(int argc,char* argv[]){
+    int arr[] {9,5,2,7,12,4,3,1,11};
+    int n = 9;
+    print(arr,n);
+    // 归并算法总体思路：先递归切分然后再排序合并即可！
+    merge_sort(arr,n);
+    print(arr,n);
+    return 0;
+}
 ```
 
