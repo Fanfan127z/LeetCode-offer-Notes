@@ -4,7 +4,7 @@
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
-### 目前累计总共有==《27》==道题：
+### 目前累计总共有==《29》==道题：
 
 #### <1> [LeetCode 剑指offer 04.二维数组中的查找：](https://leetcode.cn/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof/)
 
@@ -1360,5 +1360,66 @@ int main(int argc,char* argv[]){
     print(arr,n);
     return 0;
 }
+```
+
+#### <28> [剑指 Offer 45. 把数组排成最小的数](https://leetcode.cn/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/)
+
+这个题目的题解是非常巧妙的！！！利用了==字符串相加后再比大小==的技巧！还是从lc题解区的路飞k神大佬那学的！！！这个技巧还是能长长见识，然后记忆下来的！
+
+<img src="F:\学习过程中的截图\lc剑指offer45.png" alt="lc剑指offer45" style="zoom: 67%;" />
+
+```c++
+struct myPred:public binary_function<string,string,bool>{
+    bool operator()(const string& x,const string& y)const{
+        return (x + y) < (y + x);// 拼接成输出最小的数字字符串的自定义排序谓词！
+    }
+};
+class Solution {
+public:
+    string minNumber(vector<int>& nums) {
+        vector<string> strs;
+        for(int& num : nums){// 先将每个数字转换为字符串，并加入到字符串数组中去！
+            strs.push_back(to_string(num));
+        }
+        // 按照// 自定义排序拼接成输出最小的数字！
+        std::sort(strs.begin(),strs.end(),myPred());
+        string res = "";
+        for(auto str:strs){// 弄成一个字符串好do return
+            res += str;
+        }
+        return res;
+    }
+};
+```
+
+
+
+#### <29> [剑指 Offer 48. 最长不含重复字符的子字符串](https://leetcode.cn/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/)
+
+这个题目和[3. 无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)是一样的！
+
+```c++
+// 滑动窗口（双指针法）,这是学的y总的！
+// 得自己按照lc给出的特例，比如第一个特例，拿来跟着我这份代码画个图就行了！
+/*
+	time：O(n)
+	space:O(n)
+*/
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int res = 0,size = s.size();
+        unordered_set<char> unset;
+        for(int i = 0,j = 0;i < size;++i){
+            // 只要发现是重复元素就继续删除掉set中的对应元素
+            while(unset.find(s[i]) != unset.end()){
+                unset.erase(s[j++]);
+            }
+            unset.insert(s[i]);// 继续加入新元素
+            res = max(res,i-j+1);// 更新最长不重复数组长度！
+        }
+        return res;
+    }
+};
 ```
 
