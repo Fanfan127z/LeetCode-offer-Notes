@@ -421,7 +421,7 @@ public:
 		// 有,就do 2个步骤：
 		// 1-先将pair对的value拿出来，2-然后放到队列头部（因为最近使用过了）！
 		int res = it->second->_val;
-		put(it->first, res);			// 头插查回去LRU中
+		put(key, res);			// 头插回去LRU中
 		return res;
 	}
 	// put方法：将最近使用过的或者新的pair<key,val>插入到LRU的头部！
@@ -430,13 +430,13 @@ public:
 		// 找不到
 		Node* tnode = new Node(key, val);
 		auto it = map.find(key);
-		if (it != map.end()) {// 找到有重复key时
+		if (it != map.end()) {// 找到有重复key时，直接删除，无需从尾部删除！
 			dlist->remove(it->second);	// 先删除双向list中的该节点（）
 			dlist->addFirst(tnode);		// 后再向双向list的头部添加该节点
 			map[key] = tnode;			// 再重新do哈希表的映射关系
 		}
 		else {
-			if (map.size() == this->_capacity) {
+			if (map.size() == this->_capacity) {// 因为满了so只能从尾部进行删除了！
 				int nodeKey = dlist->removeLastNode();// 容量满了就直接删除最后一个元素
 				// 然后把映射关系也删除！
 				map.erase(nodeKey);// 按照key值把map中保存的映射关系给删除掉！
