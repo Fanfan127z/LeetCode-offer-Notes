@@ -1435,7 +1435,343 @@ public:
 
 
 
-### 目前累计总共有==《0》==道题：
+### 目前累计总共有==《5》==道题：
 
 
 
+#### <1> [BM2-链表内指定区间反转](https://www.nowcoder.com/practice/b58434e200a648c589ca2063f1faf58c?tpId=295&tqId=654&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/1.jpg" alt="1" style="zoom: 50%;" />
+
+```c++
+/**
+ * struct ListNode {
+ *	int val;
+ *	struct ListNode *next;
+ * };
+ */
+// time:O(n),最坏情况下，需要遍历整个list，比如m or n 是指向最后一个节点时
+// spcae:O(1),占用了常量级别的指针内存空间
+class Solution {
+public:
+    /**
+     * 
+     * @param head ListNode类 
+     * @param m int整型 
+     * @param n int整型 
+     * @return ListNode类
+     */
+    // 我说实话，这个题目我看了官方题解之后真的觉得很nb的！（画个图就出来了！）
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode* dummyNode = new ListNode(-1);// 虚拟头结点
+        dummyNode->next = head;
+        ListNode* prev = dummyNode;
+        ListNode* cur = head;
+        // 找到m这个位置的节点
+        for(int i = 1;i < m;++i){
+            prev = cur;
+            cur = cur->next;
+        }
+        // 从m反转到n
+        for(int i = m;i < n;++i){
+            ListNode* tmp = cur->next;
+            cur->next = tmp->next;
+            tmp->next = prev->next;
+            prev->next = tmp;
+        }
+        return dummyNode->next;// 返回真正的list头结点！
+    }
+};
+```
+
+
+
+#### <2> [BM3-链表中的节点每k个一组翻转](https://www.nowcoder.com/practice/b49c3dc907814e9bbfa8437c251b028e?tpId=295&tqId=722&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+```c++
+/**
+ * struct ListNode {
+ *	int val;
+ *	struct ListNode *next;
+ * };
+ */
+// time:O(n),最坏情况下需要遍历整个list，space:O(1),只占用了常量指针内存空间！
+class Solution {
+public:
+    /**
+     * 
+     * @param head ListNode类 
+     * @param k int整型 
+     * @return ListNode类
+     */
+    // 思路：每k个节点do一次部分反转list的操作即可！
+    // 		运用到了属于BM2中部分反转list的操作！(个人认为我自己基于BM2这个题解写的思路比BM3要好！)
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        int size = 0;
+        ListNode* cur = head;
+        // 求list size
+        while(cur){
+            cur = cur->next;
+            size++;
+        }
+        // 处理下特殊case：size == k 时应该让list全反转
+        if(size == k){
+            head = reverseAll(head);
+            return head;
+        }
+        // size != k 时应该让list部分反转
+        int i = 1;
+        while(1){
+            if( (i+k-1) >= size)break;
+            head = subReverseFun(head,i,i+k-1);
+            i += k;
+        }
+        return head;
+    }
+    ListNode* subReverseFun(ListNode* head,int m,int n){
+        ListNode* dummyNode = new ListNode(-1);
+        dummyNode->next = head;
+        ListNode* prev = dummyNode;
+        ListNode* cur = head;
+        // 找到m位置的节点
+        for(int i = 1;i < m;++i){
+            prev = cur;
+            cur = cur->next;
+        }
+        // 从m反转到n
+        for(int i=m;i<n;++i){
+            ListNode* tmp = cur->next;
+            cur->next = tmp->next;
+            tmp->next = prev->next;
+            prev->next = tmp;
+        }
+        return dummyNode->next;
+    }
+    // list全反转
+    ListNode* reverseAll(ListNode* head){
+        ListNode* prev = nullptr;
+        ListNode* cur = head;
+        while(cur){
+            ListNode* tmp = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = tmp;
+        }
+        return prev;
+    }
+};
+```
+
+
+
+#### <3> [BM7-链表中环的入口结点](https://www.nowcoder.com/practice/253d2c59ec3e4bc68da16833f79a38e4?tpId=295&tqId=23449&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目的哈希表法是我之前没想到的，但是双指针法（快慢指针法）我是了然如胸了！
+
+```c++
+/*
+struct ListNode {
+    int val;
+    struct ListNode *next;
+    ListNode(int x) :
+        val(x), next(NULL) {
+    }
+};
+*/
+// way1:双指针法（快慢指针法，很好想的，你其实画个图试几下就出来的了）
+// time:O(n),最坏情况下是无环遍历了整个list，space:O（1）,常数空间
+class Solution {
+public:
+    ListNode* EntryNodeOfLoop(ListNode* pHead) {
+        // 分2步走：
+        // 1-先判断是否有环，无环就马上返回nullptr，有环才继续进行步骤2
+        // 2-找环的入口节点指针并返回（双指针法）
+        
+        // procedure1:
+        ListNode* cur1 = pHead,* cur2 = pHead;
+        bool hasCircuit = false;// 判断有无环的标志
+        while(cur2->next && cur2->next->next){
+            cur1 = cur1->next;
+            cur2 = cur2->next->next;
+            if(cur1 == cur2){
+                hasCircuit = true;break;
+            }
+        }
+        if(hasCircuit==false)return nullptr;
+        // procedure2:
+        ListNode* cur3 = pHead,* cur4 = cur2;
+        while(cur3 != cur4){
+            cur3 = cur3->next;
+            cur4 = cur4->next;
+        }
+        return cur3;// 此时跳出循环后必然能够找到环入口节点指针！
+    }
+};
+
+// way2:哈希表法(甚至比双指针法还好想的呢！)
+// time:O(n),最坏情况下是无环遍历了整个list，space:O（n）,最坏情况下list中的all节点都存入了uset中
+class Solution {
+public:
+    ListNode* EntryNodeOfLoop(ListNode* pHead) {
+        // 思路：将list中all的节点都加入到哈希表中，若当前节点存在于哈希表中则表明存在环，
+        // 并且这个第一个存在于哈希表中的节点就是环的入口节点了！
+        unordered_set<ListNode*> uset;
+        ListNode* cur = pHead;
+        while(cur){// 遍历list的同时将每个节点加入到哈希表中
+            auto it = uset.find(cur);
+            if(it != uset.end())return (*it);
+            uset.insert(cur);
+            cur = cur->next;
+        }
+        return nullptr;// 无环，返回空指针节点
+    }
+};
+```
+
+
+
+#### <4> [BM11-链表相加(二)](https://www.nowcoder.com/practice/c56f6c70fb3f4849bc56e33ff2a50b6b?tpId=295&tqId=1008772&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我第一次do的时候确实没do对！（有暴力的思路也写出来代码了但是通过不了！）
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+// time:O(max(len1,len2))+O(m)+O(n) == O(max(m,n)),反转操作会遍历list1和list2各一次,so
+// 取最长的长度即为新的结果list的长度了！
+// space:O(1),常量级指针，没有额外的辅助空间
+class Solution {
+public:
+    /**
+     * 
+     * @param head1 ListNode类 
+     * @param head2 ListNode类 
+     * @return ListNode类
+     */
+    ListNode* addInList(ListNode* head1, ListNode* head2) {
+        // 看了官方的answer，感觉贼牛逼！
+        // 思路：使用了反转list + 加法进位
+        
+        // 先处理特殊case：
+        if(head1==nullptr)return head2;// 一个list为空，相当于0+任何数==任何数！
+        if(head2==nullptr)return head1;// 同理
+        // 后反转2个list
+        head1 = listReverse(head1);
+        head2 = listReverse(head2);
+        int jinwei = 0;// 进位
+        ListNode* newListHead = new ListNode(-1);// 结果list的头节点
+        ListNode* cur = newListHead;// 必须要有一个cur节点来遍历！留着这个虚拟头结点do最后的反转操作！
+        while(head1 != nullptr || head2 != nullptr){// 2个list中只要有一个不为空就继续do list的加法！
+            int val = jinwei;// val记录了每次2个list对应node处->val之和！
+            if(head1){
+                val += head1->val;
+                head1 = head1->next;
+            }
+            if(head2){
+                val += head2->val;
+                head2 = head2->next;
+            }
+            jinwei = val / 10;// 更新进位 的值
+            int newVal = val % 10;// push进新的结果list的值！
+            cur->next = new ListNode(newVal);
+            cur = cur->next;
+        }
+        if(jinwei != 0){// 只要进位不为0，说明还是有进位值，需要多给list加个新的进位节点，且 节点值为1！
+            cur->next = new ListNode(jinwei);
+            cur = cur->next;// cur走不走多一步其实都无所谓了的，你画个图即可理解了！
+        }
+        return  listReverse(newListHead->next);;
+    }
+    ListNode*  listReverse(ListNode* head){// 子函数，用于反转list，便于从后往前do list->val 的加法！
+        if(head==nullptr)return head;
+        ListNode* cur = head;
+        ListNode* prev = nullptr;
+        while(cur){
+            ListNode* tmp = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = tmp;
+        }
+        return prev;
+    }
+};
+```
+
+
+
+#### <5> [BM13-判断一个链表是否为回文结构](https://www.nowcoder.com/practice/3fed228444e740c8be66232ce8b87c2f?tpId=295&tqId=1008769&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+傻了我，一时间居然没do出来这种简单的题目！
+
+```c++
+/**
+ * struct ListNode {
+ *	int val;
+ *	struct ListNode *next;
+ * };
+ */
+// 这个方法超时了！
+// class Solution {
+// public:
+//     /**
+//      * 
+//      * @param head ListNode类 the head
+//      * @return bool布尔型
+//      */
+//     bool isPail(ListNode* head) {
+//         // write code here
+//         ListNode* tmp = reverseList(head);
+//         ListNode* left = head,* right = tmp;
+//         while(left && right){
+//             if(left->val != right->val)return false;
+//             left = left->next;
+//             right = right->next;
+//         }
+//         return true;
+//     }
+//     ListNode* reverseList(ListNode* head){
+//         ListNode* cur = head,* prev = nullptr;
+//         while(cur){
+//             ListNode* tmp = cur;
+//             cur->next = prev;
+//             prev = cur;
+//             cur = tmp;
+//         }
+//         return prev;
+//     }
+// };
+
+// time:O(n),n是list的长度；space:O(n),n是list的长度；
+class Solution {
+public:
+    bool isPail(ListNode* head) {
+        // 思路：将list的元素们转换为数组，用数组是否是回文来判断list是否是回文即可！
+        vector<int> v;
+        while(head){
+            v.push_back(head->val);
+            head = head->next;
+        }
+        return isHuiwen(v);
+    }
+    bool isHuiwen(const vector<int>& v){
+        int l = 0,r = v.size()-1;
+        while(l < r){
+            if(v[l] != v[r])return false;
+            l++,r--;
+        }
+        return true;
+    }
+};
+```
+
+
+
+
+
+#### <6> [BM13-判断一个链表是否为回文结构](https://www.nowcoder.com/practice/3fed228444e740c8be66232ce8b87c2f?tpId=295&tqId=1008769&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
