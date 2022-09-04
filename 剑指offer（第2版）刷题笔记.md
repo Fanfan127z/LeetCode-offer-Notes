@@ -1435,7 +1435,7 @@ public:
 
 
 
-### 目前累计总共有==《5》==道题：
+### 目前累计总共有==《6》==道题：
 
 
 
@@ -1772,6 +1772,68 @@ public:
 
 
 
+#### <6> [BM16-删除有序链表中重复的元素-II](https://www.nowcoder.com/practice/71cef9f8b5564579bf7ed93fbe0b2024?tpId=295&tqId=663&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+```c++
+/**
+ * struct ListNode {
+ *	int val;
+ *	struct ListNode *next;
+ * };
+ */
+// way1:哈希表法
+// time:O(n),n是list的长度;
+// space:O(n),哈希表最多需要存储整个list的元素！so哈希表长度为n;
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        // 只要有重复就把这个节点干掉！
+        if(head==nullptr)return head;
+        map<int,int> umap;
+        ListNode* cur = head;
+        while(cur){
+            umap[cur->val]++; 
+            cur = cur->next;
+        }
+        return buildList(umap);
+    }
+    ListNode* buildList(const map<int,int>& umap){
+        ListNode* dummyNode = new ListNode(-1);
+        ListNode* cur = dummyNode;
+        for(auto num : umap){
+            if(num.second > 1)continue;// 出现次数超过一次就马上跳过此num
+            cur->next = new ListNode(num.first);
+            cur = cur->next;
+        }
+        return dummyNode->next;
+    }
+};
+// way2:直接删除法(看的牛客官方的答案，nb！)
+// time:O(n),n是list的长度,最坏情况下需要遍历整个list;
+// space:O(1),常量级空间;
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        // 直接删除法！
+        if(head==nullptr)return head;
+        ListNode* dummyNode = new ListNode(-1);
+        dummyNode->next = head;
+        ListNode* cur = dummyNode;
+        while(cur->next && cur->next->next){
+            if(cur->next->val == cur->next->next->val){
+                int sameValue = cur->next->val;
+                while(cur->next && cur->next->val == sameValue){
+                    cur->next = cur->next->next;
+                }
+            }else cur = cur->next;// 继续正常遍历即可!
+        }
+        return dummyNode->next;
+    }
+};
+```
 
 
-#### <6> [BM13-判断一个链表是否为回文结构](https://www.nowcoder.com/practice/3fed228444e740c8be66232ce8b87c2f?tpId=295&tqId=1008769&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+
+
+#### <7> [BM16-删除有序链表中重复的元素-II](https://www.nowcoder.com/practice/71cef9f8b5564579bf7ed93fbe0b2024?tpId=295&tqId=663&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
