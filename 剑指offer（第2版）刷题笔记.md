@@ -1836,4 +1836,68 @@ public:
 
 
 
-#### <7> [BM16-删除有序链表中重复的元素-II](https://www.nowcoder.com/practice/71cef9f8b5564579bf7ed93fbe0b2024?tpId=295&tqId=663&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <7> [BM18-二维数组中的查找](https://www.nowcoder.com/practice/abc3fe2ce8e146608e868a70efebf62e?tpId=295&tqId=23256&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我在leetcode做过一次，但是忘记怎么做了！
+
+```c++
+// 先展示一下错误思路：
+class Solution {
+public:
+    // 我这里自己写的代码就是赌定了某个数字一定会出现在某一行，实则不然！你看看另外的例子就知道了！
+    // 比如：7,[[1,2,8,9],[4,7,10,13]],7虽然<9,但是7不在第一个vector中，而在第二个vector中！
+    // so我的解题思想是有问题的！
+    bool Find(int target, vector<vector<int> > array) {
+        // 二维数组的二分法
+        // 先找行，再找对应的列，分开来do，先定一边，再定另一边这样子
+        int raw = array.size(),col = array[0].size();
+        if(raw == 0 || col == 0)return false;
+        // 处理特殊case:确保target在这个二维数组的数据范围之内！
+        if(target > array[raw-1][col-1])return false;
+        if(target < array[0][0])return false;
+        int t = -1;
+        for(int i = 0;i < raw;++i){
+            if(target < array[i][col-1]){
+                t = i;break;
+            }
+        }
+        return binarySearch(array[t],target);
+    }
+    bool binarySearch(const vector<int>& nums,int tar){
+        int l = 0,r = nums.size()-1;
+        while(l <= r){
+            int mid = l+(r-l)/2;
+            if(nums[mid]==tar)return true;
+            else if(nums[mid] < tar)l = mid+1;
+            else r = mid - 1;
+        }
+        return false;
+    }
+};
+// 正确的做法：（来自牛客官方解答）
+
+// time:O(raw+col),最坏情况下需要遍历二维数组的所有行和所有列；space:O(1),没有用到额外的辅助空间(arr这个二维数组除外)，只占用了常量级内存空间
+class Solution {
+public:
+    bool Find(int target, vector<vector<int> > array) {
+        // 二维数组的二分法
+        // 先找行，再找对应的列，分开来do，先定一边，再定另一边这样子
+        // 利用了二维数组的各个子一维数组是升序数组的特性来deal的，左下角的元素总是比其下方元素小，且比右方元素小
+        // 右上角的元素总是比其下方元素小，但比其左方元素大，利用这种特性即可！
+        int raw = array.size(),col = array[0].size();
+        if(raw == 0 || col == 0)return false;// 处理特殊case
+        if(target < array[0][0] || target > array[raw-1][col-1])return false;
+        int i = raw-1,j = 0;
+        while(i >= 0 && j < col){
+            if(array[i][j] == target)return true;
+            else if(array[i][j] < target)j++;// 当前元素值 比 目标值 小，往右边走
+            else i--;// 当前元素值 比 目标值 大，往上边走
+        }
+        return false;
+    }
+};
+```
+
+
+
+#### <8> [BM18-二维数组中的查找](https://www.nowcoder.com/practice/abc3fe2ce8e146608e868a70efebf62e?tpId=295&tqId=23256&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
