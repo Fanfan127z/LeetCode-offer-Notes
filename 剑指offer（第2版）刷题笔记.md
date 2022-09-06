@@ -1435,7 +1435,7 @@ public:
 
 
 
-### 目前累计总共有==《6》==道题：
+### 目前累计总共有==《9》==道题：
 
 
 
@@ -1900,4 +1900,136 @@ public:
 
 
 
-#### <8> [BM18-二维数组中的查找](https://www.nowcoder.com/practice/abc3fe2ce8e146608e868a70efebf62e?tpId=295&tqId=23256&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <8> [BM19-寻找峰值](https://www.nowcoder.com/practice/fcf87540c4f347bcb4cf720b5b350c76?tpId=295&tqId=2227748&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这道题目其实本质上 和在数组中查找target目标值没区别！但是我没想到用二分（时间复杂度是O(log2n)==O(logn)）来do！
+
+但凡是见到**==时间复杂度==**要求是**==O(logn)==**的题目，应该第一时间想到用**==二分查找法==**才对！
+
+```c++
+// 我自己想的方法：
+// time:O(size),一次遍历数组即可完成，space:O(1),常量级空间
+class Solution {
+public: 
+    int findPeakElement(vector<int>& nums) {
+        // write code here
+        int size = nums.size(),res = -1;
+        if(size == 0)return res;
+        else if(size == 1)return 0;
+        for(int i = 0;i < size;i++){
+            // 先处理一下边界case
+            if(i == 0){// 是首元素时：只需要判断其是否大于其右边一个元素即可，因为此时nums[-1]=-无穷
+                if(nums[i] > nums[i+1]){// 虽说nums[-1]是越界不存在的，但是题目就是这么个意思而已！
+                    res = i;break;
+                }
+                else continue;
+            }
+            if(i == size-1){// 是尾元素时：只需要判断其是否大于其左边一个元素即可，因为此时nums[size]=-无穷
+                if(nums[i-1] < nums[i]){// 虽说nums[size]是越界不存在的，但是题目就是这么个意思而已！
+                    res = i;break;
+                }
+                else continue;
+            }
+            if(nums[i] > nums[i-1] && nums[i] > nums[i+1]){
+                res = i;break;
+            }
+        }
+        return res;
+    }
+};
+
+// 牛客官网学的二分法：
+// time:O(log2n)==O(logn),space:O(1)
+// 二分法最坏的情况下是连续对整个数组进行二分，反指数级时间就是log2n，也即分log2n次！
+class Solution {
+public: 
+    int findPeakElement(vector<int>& nums) {
+        // 整体思想：只要找到一个峰值满足题目的条件即可，本质上和二分查找tar目标值没什么区别！
+        int size = nums.size();
+        int l = 0,r = size-1;
+        while(l < r){
+            int mid = l + (r-l)/2;
+            if(nums[mid] > nums[mid+1]){
+                // 右边是往下走的，不一定有峰值！so往左边走继续找峰值index！
+                r = mid;
+            }else{
+                // 右边是往上走的，一定存在一个峰值！so往右边走继续找峰值index！
+                l = mid + 1;
+            }
+        }
+        return r;// 最后r停留的位置就是峰值的index了！(根据样例画个图就出来了)
+    }
+};
+```
+
+
+
+#### <9> [BM22-比较版本号](https://www.nowcoder.com/practice/2b317e02f14247a49ffdbdba315459e7?tpId=295&tqId=1024572&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目主要是巩固了我==**双指针**==的用法！牛客网的题解NB！！！
+
+![image-20220906230847100](C:/Users/11602/AppData/Roaming/Typora/typora-user-images/image-20220906230847100.png)
+
+对应==**双指针**==这种解题思路，只可能有如下几种情况：（你完全排列来想一想也能想出来双指针法怎么个思路）
+
+- 1-两个指针同方向扫描两个链表（或其他数据结构）
+
+- 2-两个指针同方向扫描一个链表
+
+- 2.1-同步走
+
+- 2.2-异步走（即：快慢指针，一个走的快，一个走的慢）
+
+- 3-两个指针反方向扫描（对撞指针）
+
+```c++
+// 看了牛客官方的答案才do出来的！(need 按照该算法思路拿个例子来画一遍完整的图例才能理解好！~)
+// time:O(max(n1,n2)),最坏的情况下，需要遍历完字符串v1(长度是n1)和v2(长度是n2)才能判断得出结果，
+// 那么时间复杂度显然就是两个字符串长度的最大值
+// space:O(1),常量级空间，没使用额外的辅助空间
+class Solution {
+public:
+    int compare(string version1, string version2) {
+        int n1 = version1.size();
+        int n2 = version2.size();
+        int i = 0,j = 0;
+        // 双指针截取比较法:
+        /*
+           2个指针同时同向 遍历字符串v1和v2,遍历的同时，
+           根据题目的规则 来 判断 每个'.'号之间的数字是否一样 即可得出结论！
+        */
+        while(i < n1 || j < n2){
+            // 注意：是||或号，因为一旦有一个字符串遍历完还得看另一个的数字怎么样
+            
+            // 先 截取v1的数字用来比较
+            // 但是这个已遍历完成的字符串对应的'.'号之间的数字可认为默认是0了！
+            long long num1 = 0;// 怕测试用例的整数太大了用int or long不够放！so 用long long
+            // 计算v1中 每个.号之间的数字：（用来比大小）
+            while(i < n1 && version1[i] != '.'){
+                num1 = num1 * 10 + (version1[i] - '0');// 其中，str[i] - '0' == 该字符对于的阿拉伯数字！
+                i++;// 往后递增
+            }
+            // 若遇到逗号了，就跳过这位.号(直接向后++即可)
+            i++;
+            // 后 截取v2的数字用来比较
+            // 计算v2中 每个.号之间的数字：（用来比大小）
+            long long num2 = 0;// 怕测试用例的整数太大了用int or long不够放！so 用long long
+            while(j < n2 && version2[j] != '.'){
+                num2 = num2 * 10 + (version2[j] - '0');
+                j++;// 往后递增
+            }
+            // 若遇到逗号了，就跳过这位.号(直接向后++即可)
+            j++;
+            // 根据题目的判断规则来 判断 v1和v2的大小关系
+            if(num1 < num2)return -1;
+            else if(num1 > num2) return 1;
+        }
+        // 若遍历完都没有返回，则表明v1==v2！return 0即可了！
+        return 0;
+    }
+};
+```
+
+
+
+#### <10> [BM22-比较版本号](https://www.nowcoder.com/practice/2b317e02f14247a49ffdbdba315459e7?tpId=295&tqId=1024572&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
