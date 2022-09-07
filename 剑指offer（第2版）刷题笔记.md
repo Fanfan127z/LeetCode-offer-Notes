@@ -2032,4 +2032,84 @@ public:
 
 
 
-#### <10> [BM22-比较版本号](https://www.nowcoder.com/practice/2b317e02f14247a49ffdbdba315459e7?tpId=295&tqId=1024572&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <10> [BM20-数组中的逆序对](https://www.nowcoder.com/practice/96bd6684e04a44eb80e6a68efc0ec6c5?tpId=295&tqId=23260&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我在leetcode上也do过，当时觉得用归并排序来do真的太巧妙了！然后牛客这里的题解也让我更加明白why这样了！好题！
+
+
+
+```c++
+// time:O(nlogn),调用n次递归栈空间;
+// space:O(n),用了额外的辅助空间临时数组tmp且tmp的长度和原数组一样都是n
+class Solution {
+private:
+    const int mod = 1000000007;
+public:
+    int InversePairs(vector<int> data) {
+        int size = data.size(),res = 0;// res保存原数组总共的逆序对个数！
+        // 思路分析：why要用归并呢？那时间复杂度是O(nlogn)的话应该是要用归并法！
+        // 首先，暴力法是O(n^2)的时间复杂度（2个for），显然不符合题目的要求！
+        // 其次，真正的reason其实是，不论是data == [4 3 1 2] 还是 [3 4 2 1]
+        //                    /     \         /   \
+        //                  [4 3]   [1 2]  [3 4]  [2 1] 这里4与[1 2]构成2个逆序对，那么 3也和 [1 2]构成2个逆序对，总共就是4个逆序对了！
+        // 也就是说区间的有序和无序对于逆序对的构成不影响！但有序的话可以方便统计逆序对个数！
+        //                  /   \    /  \  /   \   /  \ 
+        //                  4    3  1   2  3    4  2   1
+        vector<int> tmp(size);
+        mergeSort(data,0,size-1,tmp,res);
+        return res;
+    }
+    void mergeSort(vector<int>& data,int l,int r,vector<int>& tmp,int& res){
+        // 归并：先递归分割左右子区间，再递归合并左右子区间进行排序！
+        // 排序的时候再一并统计逆序对个数即可了！
+        if(l >= r){
+            return;// 只有一个元素时本身就有序了，无需继续排序!
+        }
+//         int mid = l + ((r-l) >> 1);
+        int mid = l + (r-l)/2;
+        // 递归分割左子区间
+        mergeSort(data,l,mid,tmp,res);
+        // 递归分割右子区间
+        mergeSort(data,mid+1,r,tmp,res);
+        // 在递归合并各个左右子区间
+        merge(data,l,mid,r,tmp,res);
+        return;
+    }
+    void merge(vector<int>& data,int l,int mid,int r,vector<int>& tmp,int& res){
+        int lpos = l,rpos = mid+1,pos = l;
+        // 进行合并（升序合并 且 统计 逆序对个数）
+        while(lpos <= mid && rpos <= r){
+            if(data[lpos] >= data[rpos]){
+                res += (mid - lpos + 1);// 统计逆序对个数
+                res %= mod;// 这是为了防止统计的中途由于逆序对个数太多导致res % mod值改变了
+                tmp[pos++] = data[rpos++];
+            }else{
+                tmp[pos++] = data[lpos++];
+            }
+        }
+        // 合并(if 尚未完成合并的)左子区间到临时数组中！构成有序子区间!
+        while(lpos <= mid)tmp[pos++] = data[lpos++];
+        // 合并(if 尚未完成合并的)右子区间到临时数组中！构成有序子区间!
+        while(rpos <= r)tmp[pos++] = data[rpos++];
+        // 将本轮有序子区间覆盖回原来的数组中，以改变原数组无序的现状
+        for(int i = l;i <= r;++i)data[i] = tmp[i];
+    }
+};
+```
+
+
+
+#### <11> [BM20-数组中的逆序对](https://www.nowcoder.com/practice/96bd6684e04a44eb80e6a68efc0ec6c5?tpId=295&tqId=23260&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+
+
+```c++
+
+```
+
+
+
+
+
+
+
