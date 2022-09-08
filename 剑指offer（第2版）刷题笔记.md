@@ -2036,7 +2036,7 @@ public:
 
 这个题目我在leetcode上也do过，当时觉得用归并排序来do真的太巧妙了！然后牛客这里的题解也让我更加明白why这样了！好题！
 
-
+这个方法真是==太巧妙了！==用牛客官方给出的[1 2 3 4 5 6 7 0]来do一次归并的画图操作你就能完全明白why要这么do了！
 
 ```c++
 // time:O(nlogn),调用n次递归栈空间;
@@ -2047,14 +2047,15 @@ private:
 public:
     int InversePairs(vector<int> data) {
         int size = data.size(),res = 0;// res保存原数组总共的逆序对个数！
-        // 思路分析：why要用归并呢？那时间复杂度是O(nlogn)的话应该是要用归并法！
-        // 首先，暴力法是O(n^2)的时间复杂度（2个for），显然不符合题目的要求！
-        // 其次，真正的reason其实是，不论是data == [4 3 1 2] 还是 [3 4 2 1]
-        //                    /     \         /   \
-        //                  [4 3]   [1 2]  [3 4]  [2 1] 这里4与[1 2]构成2个逆序对，那么 3也和 [1 2]构成2个逆序对，总共就是4个逆序对了！
-        // 也就是说区间的有序和无序对于逆序对的构成不影响！但有序的话可以方便统计逆序对个数！
-        //                  /   \    /  \  /   \   /  \ 
-        //                  4    3  1   2  3    4  2   1
+        /* 思路分析：why要用归并呢？那时间复杂度是O(nlogn)的话应该是要用归并法！
+         首先，暴力法是O(n^2)的时间复杂度（2个for），显然不符合题目的要求！
+         其次，真正的reason其实是，不论是data == [4 3 1 2] 还是 [3 4 2 1]
+                            /     \         /   \
+                          [4 3]   [1 2]  [3 4]  [2 1] 这里4与[1 2]构成2个逆序对，那么 3也和 [1 2]构成2个逆序		  对，总共就是4个逆序对了！
+         也就是说区间的有序和无序对于逆序对的构成不影响！但有序的话可以方便统计逆序对个数！比如[3 4] [1 2]的话可以		     一次性地把3 和 4 的逆序对个数都统计完！
+                          /   \    /  \  /   \   /  \ 
+                         4    3  1   2  3    4  2   1
+        */ 
         vector<int> tmp(size);
         mergeSort(data,0,size-1,tmp,res);
         return res;
@@ -2099,17 +2100,54 @@ public:
 
 
 
-#### <11> [BM20-数组中的逆序对](https://www.nowcoder.com/practice/96bd6684e04a44eb80e6a68efc0ec6c5?tpId=295&tqId=23260&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <11> [BM29-二叉树中和为某一值的路径(一)](https://www.nowcoder.com/practice/508378c0823c423baa723ce448cbfd0c?tpId=295&tqId=634&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
-
+忽略了**当前节点是否为空**这一**重要的二叉树递归判断条件**！不应该！
 
 ```c++
-
+/**
+ * struct TreeNode {
+ *	int val;
+ *	struct TreeNode *left;
+ *	struct TreeNode *right;
+ * };
+ */
+class Solution {
+public:
+    bool preOrder(TreeNode* cur,int tar){
+        if(cur == nullptr)return false;// 若当前节点是空节点时直接返回false（这一点是我第一次写的时候忽略了的！）
+        if(cur->left == nullptr && cur->right == nullptr){
+            // 若当前节点是叶子节点时 就判断是否符合题目条件
+            if(tar - cur->val == 0)return true;
+            else return false;
+        }
+        // 只要找到一条 从根节点 到 叶子节点 sum值==tar的路径就直接返回true即可！
+        bool leftHasPath = preOrder(cur->left,tar - cur->val);
+        if(leftHasPath)return true;
+        bool rightHasPath = preOrder(cur->right,tar - cur->val);
+        if(rightHasPath)return true;
+        return false;
+    }
+    bool hasPathSum(TreeNode* root, int sum) {
+        // 这个题目在leetcode我也刷过了！
+        // 因为题目定义了路径指的是 从 父节点 到叶子节点的过程
+        // 也即一定要遍历到叶子节点为止(找不到得到路径和==sum是另一回事，反正就是要找到叶子节点是了)
+        // 符合前序遍历的logic！
+        if(root==nullptr)return false;
+        return preOrder(root,sum);
+    }
+};
 ```
 
 
 
 
 
+#### <12> [BM29-二叉树中和为某一值的路径(一)](https://www.nowcoder.com/practice/508378c0823c423baa723ce448cbfd0c?tpId=295&tqId=634&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
+
+
+```c++
+
+```
 
