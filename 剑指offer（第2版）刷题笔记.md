@@ -1435,7 +1435,7 @@ public:
 
 
 
-### 目前累计总共有==《9》==道题：
+### 目前累计总共有==《15》==道题：
 
 
 
@@ -2143,11 +2143,155 @@ public:
 
 
 
-#### <12> [BM29-二叉树中和为某一值的路径(一)](https://www.nowcoder.com/practice/508378c0823c423baa723ce448cbfd0c?tpId=295&tqId=634&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <12> [BM30-二叉搜索树与双向链表](https://www.nowcoder.com/practice/947f6eb80d944a84850b0538bf0ec3a5?tpId=295&tqId=23253&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
-
+这个题目好像我在leetcode上也do过，但是忘记怎么do了！但是看牛客网官方的answer简直不要太舒服！！！
 
 ```c++
+// time:O(n),递归遍历二叉树的all的节点的时间复杂度就是n的！
+// space:O(n),本来是O(1)的，因为是在原树原地上进行操作，没有申请新空间！但是递归调用栈占用了n的空间！
+// 这个牛客官网的answer，挺好的！值得借鉴！
+class Solution {
+public:
+    TreeNode* pre = nullptr;
+    TreeNode* head = nullptr;
+    TreeNode* inOrder(TreeNode* cur){
+        if(cur == nullptr)return cur;
+        // 左 中 右 的中序遍历思路!
+        inOrder(cur->left);// 左
+        if(pre == nullptr){// 先初始化一下list头和要遍历的当前节点的前一个节点！
+            pre = cur;
+            head = cur;
+        }else{
+            // do连接为 双向list的操作！
+            pre->right = cur;
+            cur->left = pre;
+            pre = cur;// 更新pre节点为当前节点！以便于下一次递归的连接操作！
+        }
+        inOrder(cur->right);// 右
+        return head;
+    }
+    TreeNode* Convert(TreeNode* pRootOfTree) {
+        // 首先，对于二叉搜索树，其本身的中序遍历就是有序的！so 必须要采用中序遍历的logic来do！
+        if(pRootOfTree == nullptr)return pRootOfTree;
+        return inOrder(pRootOfTree);
+    }
+};
+```
 
+
+
+####　<13> [BM31-对称的二叉树](https://www.nowcoder.com/practice/ff05d44dfdb04e1d83bdbdab320efbcb?tpId=295&tqId=23452&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我do过N次了，但是这次还是没有一次过写出来，没有！而是想了一下才写好的！
+
+这个题目要记住的一个key是：是镜像的BT！就必须要判断一下**left** 和 **right** 才能分别判断出来！
+
+```c++
+/*
+struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+    TreeNode(int x) :
+            val(x), left(NULL), right(NULL) {
+    }
+};
+*/
+// time:O(n),要遍历二叉树的all节点，,n是节点总数！
+// space:O(n),因为调用了递归栈空间，且最大要占用n的递归栈的空间
+// 也即：最坏情况下二叉树退化为list，那么递归栈深度为n，就要用n的递归栈空间！
+class Solution {
+public:
+    // 采用后序遍历的思路来do
+    bool isJingXiang(TreeNode* left,TreeNode* right){
+        if(!left && !right)return true;
+        else if(left && !right)return false;
+        else if(!left && right)return false;
+        else if(left->val != right->val)return false;
+        // 此时走到这里，就说明左右子数都不为空 且 值一样！
+        bool outSideRes = isJingXiang(left->left,right->right);// 再继续判断其外侧子树 看是否为对称的
+        bool inSideRes = isJingXiang(left->right,right->left);// 再继续判断其内侧子树 看是否为对称的
+        bool res = outSideRes && inSideRes;// 中
+        return res;
+    }
+    bool isSymmetrical(TreeNode* pRoot) {
+        if(pRoot == nullptr)return true;// 空树也可以认为是一种特殊的镜像二叉树！
+        return isJingXiang(pRoot->left,pRoot->right);
+    }
+};
+```
+
+
+
+#### <14> [BM32-合并二叉树](https://www.nowcoder.com/practice/7298353c24cc42e3bd5f0e0bd3d1d759?tpId=295&tqId=1025038&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这道题目写出来不难，难的是理解它的**时间**和**空间复杂度**的计算！
+
+```c++
+// time:O(min(n,m)),要遍历整棵二叉树，其中，n和m分别是两棵树的深度,
+// 当一棵树访问完时，自然就连接上另一棵树的节点，故只访问了小树的节点数.
+// space:O(min(n,m)),递归栈的深度 也 同时间，只访问了小树的节点数！
+class Solution {
+public:
+    // 这里以树1作为蓝本来合并两棵树！
+    // 当然，你用树2作为蓝本来do也是ok的！
+    TreeNode* traversal(TreeNode* cur1,TreeNode* cur2){
+        if(cur1 == nullptr)return cur2;// 若树1当前节点为空，则返回树2的节点 即可
+        if(cur2 == nullptr)return cur1;// 若树2当前节点位空，则返回树1的节点 即可
+        // 直接采用前序遍历的logic来do即可了！
+        // 中
+        cur1->val += cur2->val;
+        // 左 右
+        cur1->left = traversal(cur1->left,cur2->left);
+        cur1->right = traversal(cur1->right,cur2->right);
+        return cur1;
+    }
+    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {
+        return traversal(t1,t2);
+    }
+};
+```
+
+
+
+#### <15> [BM34-判断是不是二叉搜索树](https://www.nowcoder.com/practice/a69242b39baf45dea217815c7dedb52b?tpId=295&tqId=2288088&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这道题目写出来不难，难的是理解它的**时间**和**空间复杂度**的计算！
+
+```c++
+// time:O(n),n是BST的all节点！最坏情况下需要判断遍历完BT才知道这棵树是否为BST！n是BT的节点总数
+// space:O(n),最坏情况下(即BT退化为了List的情况下)调用了深度为n的递归栈空间（n层递归）
+class Solution {
+public:
+    TreeNode* pre = nullptr;// 定义一个当前节点的 前一个节点值，用于do下属BST规则的比较！
+    // 对于BST来说，每个节点的节点值都必须要满足: leftValue < curValue < rightValue
+    // 并且这个规则 也要适用于 all的BST的子树！
+    bool inOrder(TreeNode* cur){
+        if(cur == nullptr)return true;
+        // 中序遍历的思路来do！即：左 中 右
+        bool left = inOrder(cur->left);
+        if(pre == nullptr)pre = cur;
+        else {
+            if(pre->val >= cur->val)return false;// 不是BST了直接就return false！不用继续递归do比较了！
+            else pre = cur;// 继续更新pre节点，便于do下一次的递归判断是否为BST！
+        }
+        bool right = inOrder(cur->right);
+        return left && right;
+    }
+    bool isValidBST(TreeNode* root) {
+        // BST的中序遍历是升序的！因此遍历一下取得BST的每个节点值看看是否是否是升序就能够判断是否为BST的！
+        if(root == nullptr)return true;// 空树也是特殊的BST!
+        return inOrder(root);
+    }
+};
+```
+
+
+
+#### <16> [BM34-判断是不是二叉搜索树](https://www.nowcoder.com/practice/a69242b39baf45dea217815c7dedb52b?tpId=295&tqId=2288088&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+```c++
+s
 ```
 
