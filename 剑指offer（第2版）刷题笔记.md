@@ -1435,7 +1435,7 @@ public:
 
 
 
-### 目前累计总共有==《15》==道题：
+### 目前累计总共有==《17》==道题：
 
 
 
@@ -2289,9 +2289,85 @@ public:
 
 
 
-#### <16> [BM34-判断是不是二叉搜索树](https://www.nowcoder.com/practice/a69242b39baf45dea217815c7dedb52b?tpId=295&tqId=2288088&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <16> [BM34-判断是不是完全二叉树](https://www.nowcoder.com/practice/8daa4dff9e36409abba2adbe413d6fae?tpId=295&tqId=2299105&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目虽说眼熟，但愣是没有ac出来！！！好好反省自己！！！
 
 ```c++
-s
+/**
+ * struct TreeNode {
+ *	int val;
+ *	struct TreeNode *left;
+ *	struct TreeNode *right;
+ *	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+
+// space:O(n/2)==O(n),最坏情况下，queue需要存储n/2个节点！
+// time:O(n),遍历了二叉树all的节点！其中，n是二叉树节点总数！
+class Solution {
+public:
+    bool isCompleteTree(TreeNode* root) {
+        // 思路：对于一棵二叉树，只要存在 其左子树空 但右子树不为空时 就一定不为完全二叉树了！
+        if(root == nullptr)return true;// 空树一定是完全二叉树！
+        queue<TreeNode*> que;// 用queue来辅助do层序遍历
+        que.push(root);
+        bool left = true;// 一开始默认左子树不空
+        while(!que.empty()){
+            int size = que.size();
+            for(int i=0;i < size;++i){
+                auto t = que.front();
+                que.pop();
+                if(t == nullptr)left = false;
+                else{
+                    if(left == false)return left;
+                    // 只要发现当前二叉树左子节点空了，但右子节点不空，就说明不是完全二叉树了！
+                    // 然后不论3721先把左右子节点都push进去queue队列中去！
+                    que.push(t->left);
+                    que.push(t->right);
+                }          
+            }
+        }
+        return true;
+    }
+};
+```
+
+
+
+#### <17> [BM34-判断是不是平衡二叉树](https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=295&tqId=23250&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我居然能判断错使用前中后序 何种遍历BT的logic！！！该死的！！！
+
+```c++
+class Solution {
+public:
+    int postOrder(TreeNode* cur){
+        if(cur == nullptr)return 0;
+        //  左 右 中 ，求高度的经典的后序遍历从下到上的logic！
+        int leftHeight = postOrder(cur->left);// 左
+        if(leftHeight == -1)return -1;
+        int rightHeight = postOrder(cur->right);// 右
+        if(rightHeight == -1)return -1;
+        // 中
+        int res = abs(leftHeight - rightHeight) > 1?-1:max(leftHeight,rightHeight)+1;
+        return res;
+    }
+    bool IsBalanced_Solution(TreeNode* pRoot) {
+        if(pRoot == nullptr)return true;// 空树也认为是平衡BT！
+        // 看到高度差，第一时间想到的是从下到上求高度，也即是后序遍历BT的logic
+        return postOrder(pRoot) == -1?false:true;
+    }
+};
+```
+
+
+
+#### <18> [BM34-判断是不是平衡二叉树](https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=295&tqId=23250&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+
+
+```c++
+q
 ```
 
