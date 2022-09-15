@@ -1435,7 +1435,7 @@ public:
 
 
 
-### 目前累计总共有==《17》==道题：
+### 目前累计总共有==《21》==道题：
 
 
 
@@ -2289,7 +2289,7 @@ public:
 
 
 
-#### <16> [BM34-判断是不是完全二叉树](https://www.nowcoder.com/practice/8daa4dff9e36409abba2adbe413d6fae?tpId=295&tqId=2299105&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <16> [BM35-判断是不是完全二叉树](https://www.nowcoder.com/practice/8daa4dff9e36409abba2adbe413d6fae?tpId=295&tqId=2299105&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
 这个题目虽说眼熟，但愣是没有ac出来！！！好好反省自己！！！
 
@@ -2335,7 +2335,7 @@ public:
 
 
 
-#### <17> [BM34-判断是不是平衡二叉树](https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=295&tqId=23250&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <17> [BM36-判断是不是平衡二叉树](https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=295&tqId=23250&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
 这个题目我居然能判断错使用前中后序 何种遍历BT的logic！！！该死的！！！
 
@@ -2363,11 +2363,299 @@ public:
 
 
 
-#### <18> [BM34-判断是不是平衡二叉树](https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=295&tqId=23250&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <18> [BM40-用前序和中序vector重建二叉树](https://www.nowcoder.com/practice/8a19cbe657394eeaac2f6ea9b0f6fcf6?tpId=295&tqId=23282&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+当然，用[后序和中序vector重建BT](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)也是一样的套路，后续的last一个元素就是当前BT的根节点值！然后也是先分割中序后用中序左Size来分割后序，一样的思路！只是我在刷leetcode这俩题目的时候还记得这个套路，但是刷牛客的题时就不太记得清楚了！需要反复多刷才行！
+
+```c++
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+// s:O(n),最坏情况下需要使用n层递归栈空间
+// t:O(n^2),最坏情况下，又需要构成临时的vector，是O(n^2)
+class Solution {
+public:
+    TreeNode* traversal(vector<int> prev,vector<int> in){
+        int size = prev.size();
+        if(size == 0)return nullptr;
+        TreeNode* root = new TreeNode(prev[0]);// 前序的每个首元素都是当前BT的根节点元素！
+        if(size == 1)return root;// 剩下一个的话直接build当前root节点即可return了！无需继续递归build BT了！
+        int idx = 0;
+        while(idx < in.size()){
+            if(in[idx] == root->val)break;
+            idx++;
+        }
+        // 整体思路就是先用前序的首元素来分割 中序
+        vector<int> leftIn(in.begin(),in.begin()+idx);
+        vector<int> rightIn(in.begin()+idx+1,in.end());
+        // 物理上直接删除前序首元素！因为已经用过来build当前BT的根节点了！
+        prev.erase(prev.begin(),prev.begin()+1);
+        // 然后用中序左的size来分割 前序
+        int leftInSize = leftIn.size();
+        vector<int> leftPrev(prev.begin(),prev.begin()+leftInSize);
+        vector<int> rightPrev(prev.begin()+leftInSize,prev.end());
+        // 继续递归构造左子树
+        root->left = traversal(leftPrev,leftIn);
+        // 继续递归构造右子树
+        root->right = traversal(rightPrev,rightIn);
+        return root;
+    }
+    TreeNode* reConstructBinaryTree(vector<int> pre,vector<int> vin) {
+        if(pre.size() == 0 || vin.size() == 0)return nullptr;
+        return traversal(pre,vin);
+    }
+};
+```
+
+
+
+
+
+#### <19> [BM43-包含min函数的栈](https://www.nowcoder.com/practice/4c776177d2c04c2494f2555c9fcc1e49?tpId=295&tqId=23268&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
 
 
 ```c++
-q
+// 我自己一开始写的代码：
+// time:O(n)
+// space:O(n)
+class Solution {
+private:
+    stack<int> stk;
+public:
+    void push(int value) {
+        stk.push(value);
+    }
+    void pop() {
+        stk.pop();
+    }
+    int top() {
+        if(stk.empty())return -1;
+        return stk.top();
+    }
+    int min() {
+        stack<int> tmp;
+        int res = INT_MAX;
+        // 这一个while循环就能求stack的最下值了！
+        while(!stk.empty()){
+            int t = stk.top();
+            stk.pop();
+            res = res > t ? t : res;// 保存栈的最小值！
+            tmp.push(t);
+        }
+        // 再把原来stk中的元素push还回去！
+        while(!tmp.empty()){
+            stk.push(tmp.top());
+            tmp.pop();
+        }
+        return res;
+    }
+};
+
+// 我自己这个构造出来的min方法时间复杂度是O(n)而不是O(1)了！
+// 但是栈的各个操作（push/pop/top都是O(1)的操作），so显然不符合题意！
+// 因此需要用 空间 换 时间 的思想了！
+// 因为必须要使得栈的操作时间复杂度是O（1），空间复杂度是O（n）
+// 因此就必须要采用双栈法！（牛客官方的answer,可在题解区找到官方蓝色字label的answer！）
+
+// time:O(1)
+// space:O(n)
+class Solution {
+private:
+    stack<int> stk1,stk2;
+    // 其中stk1正常保存push/pop/top操作后的栈元素！
+    // stk2保存此时stk1中最下的元素！
+public:
+    void push(int value) {
+        stk1.push(value);
+        if( stk2.empty() || value < stk2.top() ){
+            stk2.push(value);
+        }
+        else{
+            stk2.push(stk2.top());// 与stk1保持元素个数的一致性！
+        }
+        // 思路：若stk2为空 或者 当前要插入到元素值 < stk2的栈顶元素值
+        // 就把value也加入到stk2中
+        // 这样就能保证stk2中的栈顶元素都是stk1中的最小值了！
+        // 若 当前要插入到元素值 > stk2的栈顶元素值 时
+        // 就把stk2的栈顶元素再插入到stk2中，以保证后面stk1执行了pop操作后stk2与stk1保持一致
+        // 这样就不至于说之前stk1的min是-1，但是现在pop掉stk1中的-1后，返回的stk2.top()还是-1
+        // 这样子就乱套了的！这是非常容易出错的一个key point！
+    }
+    void pop() {
+        // stk1和stk2都必须要同时同步地pop元素！
+        stk1.pop();
+        stk2.pop();// 与stk1保持操作的一致性！
+    }
+    int top() {
+        if(stk1.empty())return -1;
+        return stk1.top();
+    }
+    int min() {
+        return stk2.top();
+    }
+};
+```
+
+
+
+
+
+#### <20> [BM44-有效括号序列](https://www.nowcoder.com/practice/37548e94a270412c8b9fb85643c8ccc2?tpId=295&tqId=726&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目其实在leetCode我是写过好几次的了，但是就是忘记怎么写了！有一点点思路，但是就是忘记了！牛客题解区官方的answer有对应的算法思路动画，你一看就明白的了！！！
+
+```c++
+// time:O(n),最坏情况下需要遍历完整个特殊括号字符串s
+// space:O(n),用了一个stack的辅助空间来do括号的匹配
+class Solution {
+public:
+    bool isValid(string s) {
+        // 原理：最外层的括号 即是 最早出现的左括号 
+        // 一定要对应 最晚出现的右括号 也即是先进后出的思路！因此可以用stack这种栈数据结构来deal！
+        // 一句话概况思路：最左边先出现的左括号 必须要匹配 最右边晚出现的右括号
+        // 否则就是一个无效的括号字符串！
+        stack<char> stk;
+        for(char ch : s){
+            if(ch == '{')stk.push('}');
+            else if(ch == '[')stk.push(']');
+            else if(ch == '(')stk.push(')');
+            else if(stk.empty()){
+                // 若左括号没出现的case下就说明右括号先出现了，
+                // 那肯定是不符合题目条件的，那就无需继续匹配下去浪费时间了！
+                return false;
+            }
+            else if(ch == stk.top()){// 必须要有左括号的case下才能匹配右括号
+                stk.pop();// 符合匹配规则就pop掉当前栈顶元素所代表的右括号即可
+            }
+        }
+        return stk.empty();// if栈为空则是有效的，否则就是无效的！
+    }
+};
+```
+
+
+
+#### ==<21>== [BM49-表达式求值](https://www.nowcoder.com/practice/37548e94a270412c8b9fb85643c8ccc2?tpId=295&tqId=726&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)-这个题我目前还是不太会写
+
+这个题目确实非常有难度的，要考虑全面不简单的，比leetCode上面那个“简化版本”的表达式求值难多了！
+
+从这个题目中我可以学到一个==**新的小知识点**==：
+
+```c++
+#include<iostream>
+#include<cstdio>
+int isdigit(char){...}
+// 这个isdigit函数可以帮助我们判断一个 字符 是否为 数字字符！
+// 是数字字符就返回非0，不是数字字符就返回0
+// 例子：
+int main(void){
+    if(isdigit('1')){
+    	cout<<"是数字字符！"<<endl;
+    }else{
+        cout<<"不是数字字符！"<<endl;
+    }
+    return 0;
+}
+// answer: 是数字字符！
+```
+
+
+
+##### 题目的主要信息：
+
+- 写一个支持+ - \*三种符号的运算器，其中优先级+ - 是一级，\*更高一级
+- 支持**括号**运算
+
+**思路：**
+
+对于上述两个要求，我们要考虑的是两点，一是处理运算优先级的问题，二是处理括号的问题。
+
+处理优先级问题，那必定是乘号有着优先运算的权利，加号减号先一边看，我们甚至可以把减号看成加一个数的相反数，则这里只有乘法和加法，那我们优先处理乘法，遇到乘法，把前一个数和后一个数乘起来，遇到加法就把这些数字都暂时存起来，最后乘法处理完了，就剩余加法，把之前存起来的数字都相加就好了。
+
+处理括号的问题，我们可以将括号中的部分看成一个新的表达式，即一个子问题，因此可以将新的表达式递归地求解，得到一个数字，再运算：
+
+- **终止条件：** 每次遇到左括号意味着进入括号子问题进行计算，那么遇到右括号代表这个递归结束。
+- **返回值：** 将括号内部的计算结果值返回。
+- **本级任务：** 遍历括号里面的字符，进行计算。
+
+```c++
+// 我只能说牛逼Plus！！！太tmd难想了吧这个算法思路！我自己脑洞+画图模拟一次才勉强想明白的！
+// 太tmd多细节需要考虑了！！！真tmd牛逼！！！
+class Solution {
+public:
+    vector<int> function(string s,int index){
+        stack<int> stk;
+        int i = -1;// 用于do遍历操作！
+        int num = 0;
+        char op = '+';// 默认的操作是+号！
+        for(i = index;i < s.size();++i){
+            // 先将字符数字转换为整形数字
+            if(isdigit(s[i])){
+                num = num * 10 + (s[i] - '0');
+                if( i != s.size() - 1 )continue;// 只要不是遍历的str的末尾了，就继续遍历看是否还有数字！
+            }
+            // 碰到'('时，把括号内的当成一个数字处理
+            if(s[i] == '('){
+                // 递归处理括号
+                vector<int> res = function(s,i+1);
+                num = res[0];// 更新数字num
+                i = res[1];// 更新最新遍历的下标i
+                if( i != s.size() - 1 )continue;// 只要不是遍历的str的末尾了，就继续遍历看是否还有数字！
+            }
+            switch(op){
+                case '+':{
+                    stk.push(num);
+                };break;
+                case '-':{
+                    // push相反数即可！
+                    stk.push(-num);
+                };break;
+                    //优先计算乘号
+                case '*':{
+                    int tmp = stk.top();
+                    stk.pop();
+                    stk.push(num * tmp);
+                };break;
+            }
+            num = 0;// 这一步让num 归0 非常 非常 非常 之重要！！！
+            // 若 不加这一步的话 上面的 将字符数字转换为整形数字 的操作就会出错！
+            // 就没法独立地统计每个数字并变为正确的整形数字了！
+            // 右括号结束递归
+            if(s[i] == ')'){
+                break;
+            }else {// 不结束递归就继续更新op操作执行下一步的求值运算！
+                op = s[i];
+            }
+        }
+        // 结束求值运算，然后将栈用到元素值依次累加即可！
+        int sum = 0;
+        while(!stk.empty()){
+            sum += stk.top();
+            stk.pop();
+        }
+        return {sum,i};
+    }
+    int solve(string s) {
+        // 求表达式求值！
+        return function(s,0)[0];
+    }
+};
+```
+
+
+
+
+
+#### <22> [BM49-表达式求值](https://www.nowcoder.com/practice/37548e94a270412c8b9fb85643c8ccc2?tpId=295&tqId=726&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+```c++
+ss
 ```
 
