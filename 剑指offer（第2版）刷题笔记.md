@@ -1433,9 +1433,9 @@ public:
 
 我到时候面试的时候就一定要先把==10大排序算法==再背回来！清除知道了解他们的时间空间复杂度！==(這一點是我在刷lc题目的时候没注意到的！)==
 
+注意：**我个人认为太过于难的题目我就不总结了！**
 
-
-### 目前累计总共有==《21》==道题：
+### 目前累计总共有==《25》==道题：
 
 
 
@@ -1454,13 +1454,6 @@ public:
 // spcae:O(1),占用了常量级别的指针内存空间
 class Solution {
 public:
-    /**
-     * 
-     * @param head ListNode类 
-     * @param m int整型 
-     * @param n int整型 
-     * @return ListNode类
-     */
     // 我说实话，这个题目我看了官方题解之后真的觉得很nb的！（画个图就出来了！）
     ListNode* reverseBetween(ListNode* head, int m, int n) {
         ListNode* dummyNode = new ListNode(-1);// 虚拟头结点
@@ -2653,9 +2646,151 @@ public:
 
 
 
-#### <22> [BM49-表达式求值](https://www.nowcoder.com/practice/37548e94a270412c8b9fb85643c8ccc2?tpId=295&tqId=726&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <22> [BM46-最小的K个数](https://www.nowcoder.com/practice/6a296eb82cf844ca8539b57c23e6e9bf?tpId=295&tqId=23263&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+[优先队列](https://blog.csdn.net/ACM_hades/article/details/89671679)
+
+[c++优先队列(priority_queue)用法详解](https://blog.csdn.net/weixin_36888577/article/details/79937886?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-79937886-blog-89671679.pc_relevant_multi_platform_whitelistv6&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-79937886-blog-89671679.pc_relevant_multi_platform_whitelistv6&utm_relevant_index=2)
+
+这个题目非常不错子的！让我学习到了之前我没有注意到达一个数据结构！优先队列（C++STL里封装好了这种数据结构给我们使用即是：**priority_queue**）
 
 ```c++
-ss
+// time:O(nlogn),最坏情况下，n == k，又因为优先队列增删元素值都是O(logn)的时间复杂度
+// 因此总的取前k小元素值的操作的时间复杂度就是O(k*logn) == O(n*logn)
+// space:O(n),n是原输入数组的大小
+class Solution {
+  public:
+    vector<int> GetLeastNumbers_Solution(vector<int> input, int k) {
+        // 使用优先队列来do事情！
+        priority_queue<int, vector<int>, greater<int>> que;
+        for (int& num : input)que.push(num);
+        vector<int> res;
+        while (k--) { // 将最小的四个数字push进结果数组中！
+            res.push_back(que.top());
+            que.pop();
+        }
+        return res;
+    }
+};
+```
+
+
+
+#### <23> [BM50-两数之和](https://www.nowcoder.com/practice/20ef0972485e41019e39543e8e895b7f?tpId=295&tqId=745&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个我之前在leetcode上do过了，但是不太记得解题思路来，so就通过回顾牛客网的思路，一次遍历就能deal这个题目！
+
+```c++
+// time:O(n),最坏情况下，需要遍历完整个数组才能刚刚好找到两数之和==target，此时哈希表中存的元素个数就是n-1！
+// space:O(n),最坏情况下，哈希表需要存n-1个元素，so O(n-1) == O(n)
+class Solution {
+  public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        unordered_map<int, int> hashMap;
+        for (int idx = 0; idx < numbers.size(); ++idx){
+            auto it = hashMap.find(target - numbers[idx]);
+            if( it != hashMap.end() ){
+                return {it->second+1,idx+1};// 因为能找到就说明前面已经出现过该元素来，那么idx就理应在前面的！
+                // 因为题目要求返回的数组下标是从1开始算的，而我们之前都是从0开始算的，那么就需要最后加一！
+            }else{
+                hashMap[numbers[idx]] = idx;
+            }
+        }
+        return {-1,-1};// 表示没有在数组中找到两数之和 == target的 元素的idx！
+    }
+};
+```
+
+
+
+#### <24> [BM50-三数之和](https://www.nowcoder.com/practice/20ef0972485e41019e39543e8e895b7f?tpId=295&tqId=745&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个三数之和还得是看carl哥的思路do出来比较容易理解！！！
+
+```c++
+class Solution {
+public:
+    //拿一个 -4 -1 -1 0 0  1 1 2 2 3 3 试一试这段代码！你就可以马上掌握！再不行你也得给老子背下来！这个题目非常常考！
+    // 时间复杂度：O(n^2)
+    // 空间复杂度：O(n)
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> res;
+        int size = nums.size();
+        std::sort(nums.begin(),nums.end());
+        // 题目目标：找到nums[i]+nums[j]+nums[k] == 0的三元组！
+        for(int i = 0;i < size;++i){
+            if(nums[i] > 0)break;// 若当前元素都>0了，那么后续元素之和肯定比0大了！那还找什么三元素呢对吧？
+            // 给nums[i]去重！
+            if(i > 0 && nums[i] == nums[i-1])continue;
+            int l = i + 1,r = size - 1;
+            while(l < r){
+                if(nums[i] + nums[l] + nums[r] < 0)l++;// 太小了，大一点把
+                else if(nums[i] + nums[l] + nums[r] > 0)r--;// 太大了，小一点把
+                else{
+                    res.push_back({nums[i],nums[l],nums[r]});
+                    // 然后再对nums[l] 和nums[r] do 去重的操作！
+                    while(l < r && nums[l] == nums[l+1])l++;
+                    while(l < r && nums[r] == nums[r-1])r--;
+                    // 继续让l和r双指针往下一个位置遍历！
+                    l++,r--;
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+#### <25> [四数之和](https://leetcode.cn/problems/4sum/submissions/)
+
+
+
+```c++
+// 学习carl哥教我的方法！
+// 默认升序sort + 双指针法！
+// 四数之和，三数之和，手拿把窜！见到一题就给你秒一题！
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int size = nums.size();
+        if(size < 4)return {};
+        vector<vector<int>> res;
+        std::sort(nums.begin(),nums.end());
+        // 本题的目的就是找出 nums[i]+nums[j]+nums[l]+nums[r] == target 的四元组！
+        for(int i = 0;i < size;++i){
+            // if(nums[i] > target)break;
+            // 在这里不能生效！除非target == 0
+            // 不然的话这个去重就是错误的！你想想[-4,-2,-1,-1,0,0,4,4,5,5] target == 4
+            // 你能够因为中途有一个数字大于4就使得四数之和加起来不能够== target了嘛？天真！
+            // 不信就自己去举个例子随便试1试就行，就能知道这句code是怎么错的了！
+            if(i > 0 && nums[i] == nums[i-1])continue;// 给 nums[i] 去重！
+            for(int j = i + 1;j < size;++j){
+                // if(nums[j] > target)break;
+                if(j > i + 1 && nums[j] == nums[j-1])continue;// 给 nums[j] 去重！
+                int l = j + 1,r = size - 1;
+                while(l < r){
+                    // 这里 指针 l 必然不能等于 r，因为当前两个指针指向一个位置的元素时，就都代指一个元素了，那么此时我找到的是三元组？傻了吧你！老子找到是四元组！so不能等于！不信你自己画个例子就能理解！
+                    
+                    // 注意这里，因为测试用例数字累加之后会超过int的范围，so建议使用long保存四数之和的值！
+                    if( (long)nums[i]+nums[j]+nums[l]+nums[r] < target )l++;// 太小了，变大一点！
+                    else if((long)nums[i]+nums[j]+nums[l]+nums[r] > target)r--;// 太大了，变小一点！
+                    else{
+                        // 找到其中1个符合条件的四元组了！
+                        res.push_back({nums[i],nums[j],nums[l],nums[r]});
+                        // 给nums[l] 和 nums[r] 去重！
+                        while(l < r && nums[l] == nums[l + 1])l++;
+                        while(l < r && nums[r] == nums[r - 1])r--;
+                        l++,r--;// 继续让双指针遍历到下一轮的位置！
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
 ```
 
