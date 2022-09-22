@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《25》==道题：
+### 目前累计总共有==《29》==道题：
 
 
 
@@ -2792,5 +2792,238 @@ public:
         return res;
     }
 };
+```
+
+
+
+
+
+
+
+#### <26> [BM56-有重复项数字的全排列](https://www.nowcoder.com/practice/a43a2b986ef34843ac4fdd9159b69863?tpId=295&tqId=700&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目比BM55难一点点，因为BM55是没有重复元素的全排列，不用do同一个树层的去重工作！（我刷这么多次了还是不能一次过AC！）
+
+但是这个题目的**key**就是如何**do同一个树层的去重工作**了！！！（这个你拿个小例子比如:[1,1,2]来画个图差不多能理解去重的代码了！）
+
+```c++
+class Solution {
+private:
+    vector<vector<int>> res;
+    vector<int> tmp;
+public:
+    void backtracking(const vector<int> &nums,vector<int>& used){
+        int size = nums.size();
+        if(tmp.size() == size){
+            res.push_back(tmp);
+            return;
+        }
+        for(int i = 0;i < size;++i){
+            // 先do同一树层的去重工作！ 后 do递归+回溯的正常操作！
+            if(i>0 && nums[i]==nums[i-1] && used[i-1] == 0)continue;
+            // 处理当前节点！
+            if(used[i] == 1)continue;// 使用过就直接跳过！不用it来do全排列!
+            tmp.push_back(nums[i]);
+            used[i] = 1;
+            // 继续递归！（当然，有递归就必须要有回溯！）
+            backtracking(nums,used);
+            // 回溯！
+            tmp.pop_back();
+            used[i] = 0;
+        }
+    }
+    vector<vector<int> > permuteUnique(vector<int> &num) {
+       res.clear();tmp.clear();
+       // 因为题目要求了要以字典顺序do升序排列
+       // 因此就必须要先do一个升序的sort！
+       std::sort(num.begin(),num.end());
+       int size = num.size();
+       vector<int> used(size);
+       backtracking(num,used);
+       return res;
+    }
+};
+```
+
+
+
+
+
+#### <27> [BM57-岛屿数量](https://www.nowcoder.com/practice/0c9664d1554e466aa107d899418e814e?tpId=295&tqId=1024684&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目说深搜DFS方法确实NB-PLUS的！！！
+
+```c++
+// time:O(row*col),最坏的情况下，整个grid原矩阵都是'1'，需要你遍历完整个二维数组才能统计好岛屿的数量！
+// space:O(row*col),最坏情况下，整个grid原矩阵都是'1'，需要用到的递归栈深度是row*col，即行*列数，
+class Solution {
+private:
+    // dfs深搜:把(i,j)位置的相邻的上下左右all位置若为'1'的都置为'0'!
+    void dfs(vector<vector<char> >& grid,int i,int j){
+        int row = grid.size();
+        int col = grid[0].size();
+        grid[i][j] = '0';
+        // 上，下，左，右
+        if(i - 1 >= 0  && grid[i-1][j] == '1')dfs(grid,i-1,j);// 深搜 上 do同样的子问题！
+        if(i + 1 < row && grid[i+1][j] == '1')dfs(grid,i+1,j);// 深搜 下 do同样的子问题！
+        if(j - 1 >= 0  && grid[i][j-1] == '1')dfs(grid,i,j-1);// 深搜 左 do同样的子问题！
+        if(j + 1 < col && grid[i][j+1] == '1')dfs(grid,i,j+1);// 深搜 右 do同样的子问题！
+    }
+    int solve(vector<vector<char> >& grid) {
+        int row = grid.size();
+        //空矩阵的情况
+        if (row == 0)
+            return 0;
+        int col = grid[0].size();
+        //记录岛屿数
+        int count = 0;
+        //遍历矩阵
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                //遍历到1的情况
+                if (grid[i][j] == '1') {
+                    //计数
+                    count++;
+                    //将与这个1相邻的所有1置为0
+                    dfs(grid, i, j);
+                }
+            }
+        }
+        return count;
+    }
+};
+```
+
+
+
+
+
+
+
+#### ==<28>== [BM60-括号生成](https://leetcode.cn/problems/generate-parentheses/)
+
+这个题目之前leetcode上我自己想出来了，但是在牛客网上面我又想不出来了！！！
+
+我自己都认为自己的方法非常地牛逼！！！
+
+```c++
+class Solution {
+  public:
+    vector<string> res;
+    string tmp;
+    bool isValidStr(const string& s) {
+        // 这是判断一个括号字符串是否为题目要求的合法字符串！
+        stack<char> stk;
+        if (s[0] == ')')return false;
+        stk.push(s[0]);
+        for (int i = 1; i < s.length(); ++i) {
+            if (s[i] == '(')stk.push(s[i]);
+            else if (s[i] == ')') {
+                // 当 当前字符数')'时stk辅助栈空间中居然没有'('符合了
+                // 那肯定是无效的括号字符串啊！
+                if (stk.empty())return false;
+                // 若有，则继续匹配，并将stk的'('弹出！继续进行下一轮的匹配！
+                else stk.pop();
+            }
+        }
+        return stk.empty();// 用辅助栈空间是否为空来判断是否生成了正确的有效的括号字符串！
+    }
+    void backtracking(const string& kuohao, int n, vector<int>& used) {
+        if (tmp.size() == n * 2) {
+            // 收集结果！
+            if (isValidStr(tmp))res.push_back(tmp);
+            return;
+        }
+        for (int i = 0; i < kuohao.size(); ++i) {
+            // 剪枝
+            if (used[i] > n)
+                continue; // n对括号，若某个字符个数超过n个那肯定要剪枝！直接continue！
+            // 处理当层的节点
+            tmp += kuohao[i];
+            used[i]++;
+            // 继续递归！
+            backtracking(kuohao, n, used);
+            // 回溯！
+            tmp.pop_back();
+            used[i]--;
+        }
+    }
+    vector<string> generateParenthesis(int n) {
+        res.clear();
+        tmp.clear();
+        // 就2个符合，统计用'('和')'的次数！用来剪枝！
+        string kuohao =
+            "()";// 就是从str这个集合中do排列组合 然后得出合法的括号组合！
+        vector<int> used(2, 0);
+        backtracking(kuohao, n, used);
+        return res;
+    }
+};
+```
+
+
+
+#### ==<29>== [BM61-矩阵最长递增路径](https://www.nowcoder.com/practice/0c9664d1554e466aa107d899418e814e?tpId=295&tqId=1024684&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+
+这个题目我是看的leetCode一个大佬写的优美题解写出来的！这个代码非常地优美！但是真的蛮难想的！且需要考虑**非常全面**才行！
+
+**（需要多次重复才能accept这种记忆化dfs的思路！）**
+
+![image-20220922220136516](C:/Users/11602/AppData/Roaming/Typora/typora-user-images/image-20220922220136516.png)
+
+```c++
+// 这是看的评论区的一个大佬的代码才知道要这么写的！
+// 这种思路其实是叫做记忆化深度搜索（记忆化dfs）！题解区的这个大佬写的代码 非常地优雅！！！
+// time:O(n*m), 最坏情况下 需要遍历整个二维矩阵才能找出这条最长的递增路径！
+/*
+    比如：
+    [1  2  3  4]
+    [9  7  6  5]
+    [13 12 11 10]
+    time:O(3*4)
+*/ 
+// space:O(n*m),最坏情况下，需要使用n*m层的递归栈空间！
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int n = matrix.size(),m = matrix[0].size();
+        // mark数组是用来 记录已经搜索过的位置，避免重复计算路径！
+        vector<vector<int>> mark(n,vector<int>(m,0));
+        int res = 0;
+        for(int i = 0;i < n;++i){
+            for(int j = 0;j < m;++j){
+                res = max(res,dfs(matrix,i,j,-1,mark));
+            }
+        }
+        return res;
+    }
+    int dfs(vector<vector<int>>& matrix,int i,int j,int prev, vector<vector<int>>& mark){
+        // 先判断下当前的位置坐标是否越界！
+        int n = matrix.size(),m = matrix[0].size();
+        if(i < 0 || j < 0 || i >= n || j >= m )return 0;
+        // 判断当前位置的数字是否是符合题目说的 是 递增的！
+        if(matrix[i][j] <= prev){
+            return 0;
+        }
+         // 记录已经搜索过的位置，避免重复计算
+        if (mark[i][j] != 0) {
+            return mark[i][j];
+        }
+        // 记录搜索路径和（上下左右继续do dfs记忆化深搜！）
+        mark[i][j] = 1 + max({
+            dfs(matrix,i-1,j,matrix[i][j],mark),// 向上 记忆化dfs
+            dfs(matrix,i+1,j,matrix[i][j],mark),// 向下 记忆化dfs
+            dfs(matrix,i,j-1,matrix[i][j],mark),// 向左 记忆化dfs
+            dfs(matrix,i,j+1,matrix[i][j],mark) // 向右 记忆化dfs
+        });
+        // 上下左右继续深搜dfs！
+        return mark[i][j];
+    }
+};
+/*
+	注意：
+	max(a,b)就只能够求a和b的最大值，但是
+	max({a,b,c,d})则可以求a和b和c和d的最大值！
+*/
 ```
 
