@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《29》==道题：
+### 目前累计总共有==《31》==道题：
 
 
 
@@ -3025,5 +3025,119 @@ public:
 	max(a,b)就只能够求a和b的最大值，但是
 	max({a,b,c,d})则可以求a和b和c和d的最大值！
 */
+```
+
+
+
+
+
+#### <30> [BM83-字符串变形](https://www.nowcoder.com/practice/c3120c1c1bc44ad986259c0cf0f0b80e?tpId=295&tqId=44664&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+    // 这个题目的简单版本在leetCode上面可是中等难度的噢！
+    // so不简单的哇这个题目！
+    // 注意：英文大小写的ASCII码 相差32！
+    // 也就是说 'a' == 'A' - 32; 的意思！
+
+```c++
+// time:O(2*n)==O(n),n是字符串的长度，因为遍历了两遍整个字符串，so时间复杂度是O(n*2)
+// 虽然while里面还嵌套了别的while循环，但是这些内while循环的时间复杂度 相比外while的时间复杂度是非常小的，so可忽略不计！
+// space:O(n),辅助空间stack和辅助字符串newS的长度就是n！
+// 这是我自己想的，我个人认为比牛客官方answer还好！但是我没有一次过ac！还是写了改改了写好几遍才能ac的！
+class Solution {
+  public:
+    string trans(string s, int n) {
+        int size = s.length();
+        // 因为do 反转操作特别适合 后进先出 的 特点！
+        // so使用一个辅助栈结果来do！
+        stack<string> stk;
+        int i = 0;
+        while (i < size) {
+            // 找一个一个的word
+            // 辅助指针j,用来截取word
+            int j = i;
+            while (j < size && s[j] != ' ')j++;
+            string word = s.substr(i, j - i);
+            str_Convert(word);// 先转换了再push进栈中！
+            stk.push(word);// 把每个截取出来的字符串放到辅助栈空间中！
+            // 去掉中间的多余空格子！以便于
+            while (j < size && s[j] == ' '){
+                stk.push(" ");// 空格子也是需要收集的！
+                j++;
+            }
+            i = j;// 更新主要用于do遍历的指针i
+        }
+        // 截取出all的单个word在辅助栈里面之后
+        // 就拼接 成 题目要求的新字符串即可！
+        string newS = "";
+        while (!stk.empty()) {
+            string word = stk.top();
+            stk.pop();
+            newS += word;
+        }
+        return newS;
+    }
+    // 大小写 字符 的转换子函数！
+    void str_Convert(string& s) {
+        int diff_of_DaXiaoXie = 'a' - 'A';// 这个值就是32！
+        for (char& ch : s) {
+            // 注意：这是char&是为了修改字符串s中的字符！
+            if (ch >= 'a' && ch <= 'z') {
+                ch = (char)(ch - diff_of_DaXiaoXie);// 小写字符转大写！
+            } else if (ch >= 'A' && ch <= 'Z') {
+                ch = (char)(ch + diff_of_DaXiaoXie);// 大写字符转小写！
+            }
+        }
+    }
+};
+```
+
+
+
+
+
+#### <31> [BM84-最长公共前缀](https://www.nowcoder.com/practice/28eb3175488f4434a4a6207f6f484f47?tpId=295&tqId=732&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+我只能说牛客官方的这个题目的answer着实牛逼Plus的！！！非常容易理解，还画动态图出来让我容易理解！！！very good的！
+
+若不看官方题解的话我肯定想不出来的！！！**实在不行跟着题解的代码和动画画一遍你也就非常理解这个题目的了！**
+
+```c++
+// time:O(n*len),其中，n是字符串数组的个数，len指的是公共前缀的长度！也即是最短的字符串长度！
+// 因为作为公共的前缀字符串，不可能比字符串数组中的其他任何一个字符串还要长！最多就只是相等而已！
+// space:O(1),没有使用额外的空间！
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        int n = strs.size();
+        // 处理特殊case：空字符串数组
+        if(n == 0 )return "";
+        // 因为最长公共前缀的长度不会超过任何一个字符串的长度，因此我们逐位就以第一个字符串为标杆，遍历第一个字符串的所有位置，取出字符
+        // 这句话是整个官方题解的key点！！！
+        for(int i = 0;i < strs[0].size();++i){
+            char tmp = strs[0][i];
+            for(int j = 1;j < n;++j){
+                // why这里还需要有 i >= strs[j].size()这个判断条件呢？
+                // answer:因为作为公共的前缀字符串，不可能比字符串数组中的其他任何一个字符串还要长！最多就只是相等而已！
+                // 这个道理要是不太懂的话，直接拿官方的例子1来画个图就明白的了！
+                if(i >= strs[j].size() || strs[j][i] != tmp){
+                    return strs[0].substr(0,i);
+                    // 返回标杆（字符串数组的第一个字符串）字符串的，以0为开头，的共i个字符的字符串作为最长的公共前缀！
+                    // 千万要注意：这里返回的是标杆的前缀作为公共前缀！因为就是拿标杆来do对比的！
+                }
+            }
+        }
+        return strs[0];// 最长的公共前缀就是该字符串数组的标杆，即是：字符串数组里面的第一个字符串！
+    }
+};
+```
+
+
+
+#### <32> [BM84-最长公共前缀](https://www.nowcoder.com/practice/28eb3175488f4434a4a6207f6f484f47?tpId=295&tqId=732&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+
+
+```
+
 ```
 
