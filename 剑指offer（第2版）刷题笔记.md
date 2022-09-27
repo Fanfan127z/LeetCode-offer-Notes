@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《31》==道题：
+### 目前累计总共有==《35》==道题：
 
 
 
@@ -3133,11 +3133,149 @@ public:
 
 
 
-#### <32> [BM84-最长公共前缀](https://www.nowcoder.com/practice/28eb3175488f4434a4a6207f6f484f47?tpId=295&tqId=732&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### <32> [BM86-大数加法](https://www.nowcoder.com/practice/11ae12e8c6fe48f883cad618c2e81475?tpId=295&tqId=1061819&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
 
 
 
+```c++
+// 这个题解是我按着题解区一个大佬的java题解然后 不申请额外栈空间写出来的！
+// time:O(max(sSize,tSize))
+// space:O(1),没有使用额外的空间
+
+class Solution {
+  public:
+    string solve(string s, string t) {
+        int sSize = s.size(), tSize = t.size();
+        if (sSize == 0)return t;
+        if (tSize == 0)return s;
+        // 让2个数字字符串的长度保持一致！方便后续do的相加操作！
+        // 然后把新计算出来的数字直接转换为对应的数字字符放到字符串s中，作为结果集即可！
+        while (sSize < tSize) {
+            s = "0" + s;
+            sSize++;
+        }
+        while (tSize < sSize) {
+            t = "0" + t;
+            tSize++;
+        }
+        int jinwei = 0;
+        for (int i = sSize - 1, j = tSize - 1; i >= 0 && j >= 0; i--, j--) {
+            int tmp = s[i] - '0' + t[j] - '0' + jinwei;// 求本轮和！
+            jinwei = tmp / 10;
+            int yushu = tmp % 10;
+            s[i] = yushu + '0';// 数字转换为对应的数字字符！
+        }
+        if(jinwei != 0)s = "1" + s;
+        return s;
+    }
+};
 ```
 
+
+
+
+
+
+
+#### <33> [BM85-验证IP地址](https://www.nowcoder.com/practice/55fb3c68d08d46119f76ae2df7566880?tpId=295&tqId=1024725&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目贼jb难，别想了吧我觉得！面试的时候do不出来的基本上，很难想！！！
+
+但是这个题目也让我学习到了一个**技巧**：**split字符串分割函数**的实现！(python中有直接封装好的标准库.split()方法)
+
+```c++
+//将字符串从符号spliter中分割开，形成字符串数组！
+// test: input "102.123.123.456" --> output {"102","123","123","456"}
+vector<string> split(string s,string spliter){
+    // s 是待分割de字符串，spliter是待用以分割的符号
+    vector<string> res;
+    // 遍历字符串查找spliter 并 分割数字字符串到res结果数组中
+    int i = 0;
+    while (i != s.npos) {
+        i = s.find(spliter);
+        res.push_back(s.substr(0,i));
+        s = s.substr(i + 1);// 把已经分割好的字符串物理删除掉！
+    }
+    return res;
+}
 ```
+
+
+
+#### <34> [BM86-合并两个有序的数组](https://www.nowcoder.com/practice/89865d4375634fc484f3a24b7fe65665?tpId=295&tqId=658&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目我在leetcode上刷过好几次，但是现在这里又忘记思路了！！可恶的！！！不应该这样的呀！！！
+
+```c++
+// time:O(n+m),m是A数组长度，n是B数组长度
+// space:O(1),没使用额外空间
+class Solution {
+public:
+        // 思路：
+        // 从后往前 将A和B中较大者填入到A的末尾，末尾--，继续循环遍历这样子！
+        // 若不懂的话随便画个图就能get到的了！
+        // 注意这里的越界条件的判断！
+        // idxB小于0时 or A数组自己的元素之比较大时 就让A数组自己的元素填到合适的位置
+        // 否则 就让A数组的对应位置填充B数组的元素！
+        // 注意idxA和idxB是否越界的问题！
+    void merge(int A[], int m, int B[], int n) {
+        int idxA = m-1,idxB = n-1,pos = m+n-1;
+        for(int pos = m + n - 1;pos >= 0;pos--){
+            if(idxB < 0 || (idxA >= 0 && A[idxA] >= B[idxB])){
+                A[pos] = A[idxA--];
+            }else{
+                A[pos] = B[idxB--];
+            }
+        }
+        return;
+    }
+};
+```
+
+
+
+
+
+
+
+#### <35> [BM92-最长无重复子数组](https://www.nowcoder.com/practice/b56799ebfd684fb394bd315e89324fb4?tpId=295&tqId=1008889&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目说看的牛客网官方answer才知道要这么干才能do出来！
+
+```c++
+// time:O(n),n是arr长度，最坏情况下需要遍历整个arr一次
+// space：O(n),最坏情况下哈希表需要存储n个pair！
+// 解题思路：
+// 双指针 + map的方法 维护一个滑动窗口，在双指针遍历的同时，顺便记录 最长无重复元素子数组 的长度！
+class Solution {
+public:
+    int maxLength(vector<int>& arr) {
+        // 哈希表:用来记录窗口内 非重复的数字
+        unordered_map<int,int> mp;
+        int res = 0;
+        // 设置窗口左右边界left和right
+        // right指针优先移动，然后left左指针用来调整滑动窗口的左边界！（if需要的话）
+        for(int left = 0,right = 0;right < arr.size();right++){
+            // 窗口右移进入哈希表统计出现次数
+            mp[arr[right]]++;
+            // 当出现次数大于1时，则窗口内有重复
+            while(mp[arr[right]] > 1){
+                // 窗口左移，同时减去该数字的出现次数
+                mp[arr[left++]]--;
+            }
+            // 维护子数组长度最大值
+            res = max(res,right-left+1);// 统计滑动窗口长度！也就是求当前数组最长无重复子数组长度了！
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+#### <36> [BM92-最长无重复子数组](https://www.nowcoder.com/practice/b56799ebfd684fb394bd315e89324fb4?tpId=295&tqId=1008889&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+
 
