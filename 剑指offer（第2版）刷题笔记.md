@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《35》==道题：
+### 目前累计总共有==《38》==道题：
 
 
 
@@ -3275,7 +3275,188 @@ public:
 
 
 
-#### <36> [BM92-最长无重复子数组](https://www.nowcoder.com/practice/b56799ebfd684fb394bd315e89324fb4?tpId=295&tqId=1008889&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### <36> [BM94-接雨水](https://www.nowcoder.com/practice/31c1aed01b394f0b8b7734de0324e00f?tpId=295&tqId=1002045&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目我都不知道写多少遍了，但是就是不太会！！！这种面试高频题目，但是又比较有难度且思维上不好想的题目需要面试前大量刷大量记忆！！！
+
+```c++
+// dp法：学carl哥教我的思路！
+// time:O(n*3)==O(n),n是原数组长度,使用了3次for循环，每次都是遍历n个长度的数组
+// time:O(n*2)==O(n),使用了2个辅助数组空间存放 每个列 的左边最大高度 和 右边最大高度
+class Solution {
+public:
+    long long maxWater(vector<int>& arr) {
+        int size = arr.size();
+        vector<int> maxLeft(size,0),maxRight(size,0);
+        int sum = 0;// 保存雨水总量！
+        // 先求每个列左边最大高度(值得注意的是：第一个列左边最大高度是其本身)
+        maxLeft[0] = arr[0];
+        for(int i = 1;i < size;++i){
+            maxLeft[i] = max(maxLeft[i-1],arr[i]);
+        }
+        // 再求每个列右边最大高度(值得注意的是：最后一个列右边最大高度是其本身)
+        maxRight[size-1] = arr[size-1];
+        for(int j = size-2;j >=0;--j){
+            maxRight[j] = max(maxRight[j+1],arr[j]);
+        }
+        // 求雨水总和
+        for(int i = 0;i < size;++i){
+            int tmp = min(maxLeft[i],maxRight[i]) - arr[i];
+            if(tmp > 0)sum += tmp;// 雨水体积大于0时才统计倒结果中！
+        }
+        return sum;
+    }
+};
+```
 
 
+
+
+
+
+
+#### <37> [BM93-盛水最多的容器](https://www.nowcoder.com/practice/3d8d6a8e516e4633a2244d2934e5aa47?tpId=295&tqId=2284579&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目我明明在之前leetcode上一次过刷过了，但是这里又忘记怎么用双指针来降低时间复杂度了！！！
+
+```c++
+// time:O(n),最坏情况下需要遍历整个数组！
+// space:O(1),没有使用额外的辅助空间！
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        // 暴力法肯定就是2个for了！但是超时了！应该尝试使用双指针法来降低时间复杂度！
+        // int size = height.size();
+        // int res = 0;
+        // for(int i = 0;i < size;++i){
+        //     for(int j = i+1;j < size;++j){
+        //         int tmp = min(height[i],height[j])*(j-i);
+        //         res = max(res,tmp);
+        //     }
+        // }
+        // return res;
+        
+        // 贪心 + 双指针思想（主要还是双指针）！
+        int size = height.size();
+        int res = 0;
+        int left = 0,right = size - 1;
+        while(left < right){
+            int tmp = min(height[left],height[right]) * (right-left);
+            res = max(res,tmp);// 保存最多可能盛放的雨水量！
+            // 优先放弃短边，以便于贪得最多可盛放雨水量！
+            if(height[left] < height[right])left++;
+            else right--;
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+#### ==<38>== [BM90-最小覆盖子串](https://www.nowcoder.com/practice/3d8d6a8e516e4633a2244d2934e5aa47?tpId=295&tqId=2284579&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这种其实就是**简单的hard题目**，其实还是能够deal的！把思路想清楚后再记忆一下还是能够do的！
+
+滑动窗口（本质上就是用unordered_map + 双指针来do）
+
+这是我看的leetcode的视频和题解后，自己按照这种思路并结合题解写出来的！！！
+
+```c++
+class Solution {
+public:
+    // 滑动窗口+哈希表 法！
+    unordered_map<char,int> smap;// key-char存放s中的字符，value-int存放该字符对应的出现频次
+    unordered_map<char,int> tmap;// key-char存放t中的字符，value-int存放该字符对应的出现频次
+    string minWindow(string s, string t) {
+        if(s.size() < t.size()){
+            return "";// 返回空串
+        }
+        for(char ch : t)tmap[ch]++;// 统计t串中各个字符出现次数
+        int minLen = INT_MAX;
+        int start = 0,end = 0,ansStart = -1;// 双指针维护一个滑动窗口！
+        for(;end < s.size();end++){// 右指针end 继续下一轮的右移动遍历！
+            if(tmap.find(s[end]) != tmap.end()){
+                // 或者直接用if( tmap.count(s[end]) ) 来判断也是ok的！
+                // if 有的话则count方法会返回非0(相当于true)，无就返回0(相当于false)
+                smap[s[end]]++;
+            }
+            while(isValidWindow() && start <= end){// start <= end 是用来保证start左指针没越界的 条件！
+                // 先把有效的滑动窗口（即是有效的覆盖子串长度 更新一下,以便于后续用.substr()方法截取结果子串！）
+                if(minLen > end - start + 1){// 这里采用[start,end]左闭右闭区间来do事情！
+                    minLen = end - start + 1;
+                    ansStart = start;// 保存最终结果的起始位置,以便于后续用.substr()方法截取结果子串！
+                }
+                // 找到一个有效窗口的case下就要尝试让start--看是否能够缩小滑动窗口
+                if(tmap.count(s[start])){
+                    smap[s[start]]--;// 左指针右移动，且让其对应s串中的字符出现次数-1
+                    // 左指针start 继续下一轮的右移动遍历！
+                }
+                start++;
+            }
+        }
+        return ansStart == -1 ? "" : s.substr(ansStart,minLen);
+    }
+    bool isValidWindow(){
+        for(auto p : tmap){// 这里必须使用遍历tmap的方法来拿正确判断是否当前滑动窗口统计倒数字都是有效的！
+            if(smap[p.first] < p.second)return false;
+            // 此时S中的滑动窗口(所代表的覆盖子串)并没有覆盖t中all的字符！so是无效的滑动窗口（也即是无效的覆盖子串）
+        }
+        return true;
+    }
+};
+```
+
+
+
+#### <39> [BM96-主持人调度（二）](https://www.nowcoder.com/practice/4edf6e6d01554870a12f218c94e8a299?tpId=295&tqId=1267319&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目我一开始题目都没咋看懂！！！
+
+```c++
+这个题目绝逼是出错了！！！甚至题解的codes带入自测例子都不对的！
+就比如这个例子：2,[[1,2],[3,4]] 这个按照题意很明显只是需要1个主持人就ok了
+但是下面这个官方代码却计算出来res == 2！！！这就是问题了！
+```
+
+
+
+#### <40> [BM95-分糖果问题](https://www.nowcoder.com/practice/76039109dd0b47e994c08d8319faa352?tpId=295&tqId=1008104&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+我只能说牛客官方题解NB-PLUS!!!题解是非常好理解的！！！
+
+```c++
+// time:O(n*2)==O(n),n是原数组arr的长度
+// space:O(n),使用长度为n的辅助数组空间vector<int> 存放给每个孩子所分配的糖果数量
+class Solution {
+public:
+    int candy(vector<int>& arr) {
+        // 我看牛客官方的题解answer步骤，太clear了！NB-PLUS
+        int size = arr.size();
+        // 先来个辅助数组，保存各个孩子分配的糖果数（默认情况下每个孩子都来一个糖果,这是 题目所要求的）
+        vector<int> tmp(size,1);
+        // 先从左到右遍历（比较相邻2个孩子的得分）
+        // 若右边孩子比左边孩子得分高，则右边孩子糖果数+1
+        for(int i = 1; i < size;++i){
+            if(arr[i-1] < arr[i]){
+                tmp[i] = tmp[i-1]+1;
+            }
+        }
+        // 后从右到左遍历（比较相邻2个孩子的得分）
+        int res = tmp[size-1];// 保存最终糖果总数
+        for(int i = size-2; i >= 0;--i){
+            if(arr[i] > arr[i+1]){
+                if(tmp[i] <= tmp[i+1]){
+                    tmp[i] = tmp[i+1]+1;
+                }
+            }
+            res += tmp[i];// 在第2次遍历数组时 就顺便统计糖果总数 可以减少一轮for遍历！
+        }
+        // 若左边孩子比右边孩子得分高，则左边孩子糖果数+1(if左边孩子糖果数不大于右边孩子糖果数的case下)
+        return res;
+    }
+};
+```
 
