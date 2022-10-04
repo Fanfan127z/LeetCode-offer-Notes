@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《38》==道题：
+### 目前累计总共有==《45》==道题：
 
 
 
@@ -3458,5 +3458,231 @@ public:
         return res;
     }
 };
+```
+
+
+
+
+
+
+
+
+
+#### <41> [BM98-螺旋矩阵](https://www.nowcoder.com/practice/7edf70f2d29c4b599693dc3aaeea1d31?tpId=295&tqId=693&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题我在leetcode上面是do过的了！但还是记不得怎么模拟！！！
+
+```c++
+// time:O(m*n),相当于要遍历整个矩阵的all元素了！
+// space:O(1),res是必要的结果区间，但除此之外我们并没有使用额外的非必要的辅助空间！
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int> > &matrix) {
+        int row = matrix.size();
+        if(row == 0)return {};
+        int col = matrix[0].size();
+        vector<int> res;
+        int left = 0,right = col - 1;
+        int up = 0,down = row - 1;
+        while(left <= right && up <= down){
+            // 从左到右
+            for(int i = left;i <= right;++i){
+                res.push_back(matrix[up][i]);
+            }
+            up++;
+            if(up > down)break;
+            // 从上到下
+            for(int i = up;i <= down;++i){
+                res.push_back(matrix[i][right]);
+            }
+            right--;
+            if(right < left)break;
+            // 从右到左
+            for(int i = right;i >= left;--i){
+                res.push_back(matrix[down][i]);
+            }
+            down--;
+            if(down < up)break;
+            // 从下到上
+            for(int i = down;i >= up;i--){
+                res.push_back(matrix[i][left]);
+            }
+            left++;
+            if(left > right)break;
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+#### <42> [BM97-旋转数组](https://www.nowcoder.com/practice/e19927a8fd5d477794dac67096862042?tpId=295&tqId=1024689&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个我也在leetcode上面已经do过了！但是就是忘记思路是什么了！
+
+```c++
+// time:O(3*n)==O(n),3次std::reverse()反转操作 最坏的时间复杂度 都是O(n)
+// space:O(1)，并没有使用额外的辅助空间！
+class Solution {
+public:
+    vector<int> solve(int n, int m, vector<int>& a) {
+        // 将数组后m个数字覆盖到数组开头处
+        // 然后将开头
+        if(m == 0)return a;
+        m %= n;
+        // 因为m有可能会大于n，但是循环右移n次后相当于和原数组是一样的，因此就do一次取余数的操作，过滤掉不必要的右移位的操作！
+        std::reverse(a.begin(), a.end());
+        std::reverse(a.begin(),a.begin()+m);
+        std::reverse(a.begin()+m,a.end());
+        return a;
+    }
+};
+```
+
+
+
+#### <43> [BM99-顺时针旋转数组](https://www.nowcoder.com/practice/2e95333fbdd4451395066957e24909cc?tpId=295&tqId=25283&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目==我自己想出来了==！！！你自己画个图也能想出来的！不难！但是就是第一次do这种模拟题目，比较陌生，so应该记录在刷题笔记中，以备忘记这种思路！！！
+
+```c++
+// time:O(n*n),相当于遍历了整个矩阵
+// space:O(1),除了必要的结果数组外，没有使用额外的辅助空间！
+class Solution {
+public:
+    vector<vector<int> > rotateMatrix(vector<vector<int> > mat, int n) {
+        // easy job!
+        // 1:先交换对应行
+        int l = 0,r = n-1;
+        while(l < r){
+            swap(mat[l],mat[r]);
+            l++,r--;
+        }
+        // 2:然后swap对角线两边的元素即可了！
+        for(int i = 0;i < n;++i){
+            for(int j = i+1;j < n;++j){
+                // 对角线上到元素无需交换
+                // 只是把对角线两边的元素交换即可！
+                swap(mat[i][j],mat[j][i]);
+            }
+        }
+        return mat;
+    }
+};
+```
+
+
+
+#### <44> [BM64- 最小花费爬楼梯](https://www.nowcoder.com/practice/6fe0302a058a4e4a834ee44af88435c7?tpId=295&tqId=2366451&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目carl哥总结的dp里面也讲解过，但是！这里牛客网的答案==显而易见==且==非常容易理解==！！！
+
+so我甚至认为牛客网的dp题解比carl哥的题解要好！！！
+
+```c++
+// time:O(n),其中n是cost数组的大小,一个for遍历了一轮cost数组，so时间复杂度是O(n)!
+// space:O(n),使用了辅助数组空间 vector<int>
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int size = cost.size();
+        vector<int> dp(size+1,0);
+        // 其中，dp[i]:表示的是到达第i个台阶需要花费的最小代价！
+        dp[0] = 0,dp[1] = 0;// 由于第0个 or 第1个台阶无需爬都可以到达，因此这2个台阶的最小代价就是0了！
+        for(int i = 2;i <= size;++i){
+            dp[i] = min(dp[i-1] + cost[i-1],dp[i-2]+cost[i-2]);// 递归公式！
+            // 第i个台阶的最小花费是 第i-1个台阶的最小花费 + 第i-2个台阶的最小花费！
+        }
+        return dp[size];
+    }
+};
+```
+
+
+
+
+
+
+
+#### <45> [BM66- 最长公共子串](https://www.nowcoder.com/practice/f33f5adc55f444baa0e0ca87ad8a6aac?tpId=295&tqId=991150&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目要用dp来do确实很有难度，但是牛客的官方题解还算能理解的，主要 需要我画个图理解下这个代码的思路才能记住这种套路！！！
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/bm66.jpg" alt="bm66" style="zoom: 67%;" />
+
+```c++
+// time:O(len1*len2),遍历对比2个字符串中的每一个字符！
+// space:O(len1*len2),辅助dp数组大小是len1*len2的,其中len1是str1的长度，len2是str2的长度
+class Solution {
+public:
+    // 我只能说，这个题解NB-PLUS!太牛逼了！我画个图才能明白这个代码的思路！！！
+    string LCS(string str1, string str2) {
+        //dp[i][j]表示到str1第i个个到str2第j个为止的公共子串长度
+        vector<vector<int> > dp(str1.length() + 1, vector<int>(str2.length() + 1, 0)); 
+        int max = 0;
+        int pos = 0;
+        for(int i = 1; i <= str1.length(); i++){
+            for(int j = 1; j <= str2.length(); j++){
+                //如果该两位相同
+                if(str1[i - 1] == str2[j - 1]){ 
+                    //则增加长度
+                    dp[i][j] = dp[i - 1][j - 1] + 1; 
+                }
+                else{ 
+                    //该位置为0
+                    dp[i][j] = 0; 
+                }
+                //更新最大长度
+                if(dp[i][j] > max){ 
+                    max = dp[i][j];
+                    pos = i - 1;
+                }
+            }
+        }
+        return str1.substr(pos - max + 1, max);
+    }
+};
+// 我自己理解了上面牛客官方给出的代码后写出来带注释的版本：
+class Solution {
+public:
+    // 我只能说，这个题解NB-PLUS!太牛逼了！我画个图才能明白这个代码的思路！！！
+    string LCS(string str1, string str2) {
+        //dp[i][j]:表示的是str1的到idx==i为止的子串与str2中到idx==j为止的子串中，最长的公共子串长度
+        vector<vector<int>> dp(str1.size()+1,vector<int>(str2.size()+1,0));
+        int max = 0;// 保存最长公共子串的长度！
+        int pos = 0;// 保存str1中是最长公共子串的i的位置！
+        // 这里以str1为基准，最终会返回str1中的子字符串作为结果string！
+        // so 用pos变量记录str1中的所统计到达最长公共子串的i的位置！
+        for(int i = 1;i <= str1.size();++i){
+            for(int j = 1;j <= str2.size();++j){
+                if(str1[i-1] == str2[j-1]){
+                    // 当前字符相等，dp相应位置置为其左上角的dp[i-1][j-1]+1!
+                    dp[i][j] = dp[i-1][j-1]+1;
+                }else{// 当前字符不相当，dp相应位置置为0
+                    dp[i][j] = 0;
+                }
+                // 记录str1中的所统计到达最长公共子串的i的位置！
+                if(max < dp[i][j]){
+                    max = dp[i][j];
+                    pos = i - 1;
+                }
+            }
+        }
+        return str1.substr(pos - max + 1,max);
+    }
+};
+```
+
+
+
+#### <46> [BM66- 最长公共子串](https://www.nowcoder.com/practice/f33f5adc55f444baa0e0ca87ad8a6aac?tpId=295&tqId=991150&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+```c++
+
 ```
 
