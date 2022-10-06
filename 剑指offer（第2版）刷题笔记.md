@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《45》==道题：
+### 目前累计总共有==《49》==道题：
 
 
 
@@ -3680,9 +3680,199 @@ public:
 
 
 
-#### <46> [BM66- 最长公共子串](https://www.nowcoder.com/practice/f33f5adc55f444baa0e0ca87ad8a6aac?tpId=295&tqId=991150&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### <46> [BM70-兑换零钱（一）](https://www.nowcoder.com/practice/3911a20b3f8743058214ceaa099eeb45?tpId=295&tqId=988994&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+我只能说这个思路NB-PLUS!我完全不可能自己想出来！！！你代[5 2 3],20 这个小例子进来这个代码就能理解why是这样写的了！
+
+但要想出来并背下来对我来说还是有挺大难度的！！！
 
 ```c++
+// time:O(n*aim),n是原货币面值数组长度，aim是目标值！外for从1遍历到aim元，内for遍历整个原货币数组!
+// space:O(aim),辅助dp数组大小是aim,so O(aim+1)==O(aim)
+class Solution {
+public:
+    int minMoney(vector<int>& arr, int aim) {
+        // 小于1的都返回0
+        if(aim < 1)return 0;
+        // dp[i]:表示要凑齐i元最少需要多少张货币
+        vector<int> dp(aim+1,aim+1);
+        dp[0] = 0;// 首先，凑成0元所需最小货币数肯定是0张货币！这个千万不能忘记！
+        // 遍历1-aim元
+        for(int i = 1;i <= aim;++i){
+            // 每种面值的货币都要枚举
+            for(int j = 0;j < arr.size();++j){
+                // if面值不超过要凑的钱才能用
+                if(arr[j] <= i){// 要是大于当前面值为i元的货币你都没法用啊！！！
+                    // 维护最小值
+                    dp[i] = min(dp[i],dp[i-arr[j]]+1);
+                }
+            }
+        }
+        // if最终答案大于aim代表无解(因为这里我们让dp数组都初始化为了aim+1，可以用这个来判断什么时候是无解的！！！)
+        return dp[aim] > aim?-1:dp[aim];
+    }
+};
+// 下面我自己根据自己的理解重写一次版本的代码：
+// time:O(n*aim),n是原货币面值数组长度，aim是目标值！外for从1遍历到aim元，内for遍历整个原货币数组!
+// space:O(aim),辅助dp数组大小是aim+1,so O(aim+1)==O(aim)
+class Solution {
+public:
+    int minMoney(vector<int>& arr, int aim) {
+        if(aim < 1)return 0;// 先处理一下特殊case！
+        // dp[i]:代表要凑成i元所需要最少的货币数
+        vector<int> dp(aim+1,aim+1);
+        // 初始化dp数组的数值为aim+1是为了方便判断是否能够组成aim
+        dp[0] = 0;// 凑成0元所要货币数最少那肯定就是0个货币了！这个千万不能够忘记！
+        // 外for遍历1元 ~ aim元，进而通过内for凑成他们所需最少货币数
+        for(int i = 1;i <= aim;++i){
+            // 内for是真正求凑成i元所需的最少货币数
+            for(int j = 0;j < arr.size();++j){
+                if(arr[j] <= i){// 要是大于当前面值为i元的货币你都没法用啊！！！
+                    // 当前货币面值小于我要凑成的总额时，这张货币 才能够被用上！
+                    dp[i] = min(dp[i],dp[i-arr[j]]+1);
+                    // dp动态规划的本质就是把问题都分割为若干相互联系的子问题，先deal子问题
+                    // 然后从这些子问题中得到原问题的结果！
+                }
+            }
+        }
+        // 当dp[aim] > aim时，即是aim+1 > aim这种case发生时，就会判定是无法凑成aim值！
+        // so返回-1！（这是题目规定的）
+        return dp[aim] > aim ? -1 : dp[aim];
+    }
+};
+```
 
+
+
+
+
+#### <47> [BM68-矩阵的最小路径和](https://www.nowcoder.com/practice/7d21b6be4c6b429bb92d219341c4f8bb?tpId=295&tqId=1009012&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目我好像在leetcode上面已经搞过一次了，so这里我很轻松就自己想出来了！和牛客网的官方标准答案一毛一样！！！NB-PLUS!
+
+```c++
+// time:O(n*m+n+m),其中,n是matrix矩阵的行数，m是数组的列数
+// space:O(n*m),使用了辅助空间dp[i][j],大小是n*m
+class Solution {
+public:
+    // 这道题目其实想一想，把大问题分解为几个相互有练习的子问题
+    // 的话，其实也就那样！不难！
+    int minPathSum(vector<vector<int> >& matrix) {
+        int row = matrix.size(),col = matrix[0].size();
+        // dp[i][j]:表示走到(i,j)这个位置的all路径的最小路径和！
+        vector<vector<int>> dp(row,vector<int>(col,0));
+        // 给dp数组初始化！
+        dp[0][0] = matrix[0][0];
+        for(int i = 1;i < col;++i){
+            dp[0][i] = dp[0][i-1]+matrix[0][i];
+        }
+        for(int j = 1;j < row;++j){
+            dp[j][0] = dp[j-1][0]+matrix[j][0];
+        }
+        // 正式从(0,0)遍历到(n-1,m-1) 填充dp数组的各个子问题了！
+        for(int i = 1;i < row;++i){
+            for(int j = 1;j < col;++j){
+                // 因为题目规定了只能向右 or 向下走！so取这2个方向路径和的最小值 + 上到达当前(i,j)位置的数字 的总和求生当dp[i][j]的值了！
+                dp[i][j] = min(dp[i][j-1],dp[i-1][j])+matrix[i][j];
+            }
+        }
+        return dp[row-1][col-1];// row == n,col == m
+    }
+};
+```
+
+
+
+#### <48> [BM72-连续子数组的最大和](https://www.nowcoder.com/practice/459bd355da1549fa8a49e350bf3df484?tpId=295&tqId=23259&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这种简单dp题目我也没有思路！！！我不能接受这么菜的自己！！！
+
+```c++
+// time:O(n),n是原数组长度
+// space:O(n),使用了辅助dp空间且其长度为n！
+class Solution {
+public:
+    int FindGreatestSumOfSubArray(vector<int> array) {
+        int size = array.size();
+        // 先处理特殊case
+        if(size == 0)return 0;
+        else if(size == 1)return array[0];
+        vector<int> dp(size,0);
+        // dp[i]:表示终点下标为i的连续子数组的和的最大值就是dp[i]了！
+        dp[0] = array[0];// 第一个子数组最大值那肯定就是其本身了！
+        int maxSum = INT_MIN;
+        for(int i = 1;i < size;++i){
+            // 因为要 求的是 连续子数组的和的 最大值
+            // so要么当前元素加进去连续子数组和中，只有2种情况需要分析：
+            // 1:要么和 变大了
+            // 2:要么和 变小了
+            // 要是变大了就取dp[i-1]+array[i]作为当前dp[i]的连续子数组和的最大值
+            // 要是变小了就截断当前的连续子数组，重新开始求子数组和的最大值！顾名思义就是取array[i]作为当前的dp[i]了！
+            dp[i] = max(dp[i-1]+array[i],array[i]);
+            maxSum = max(maxSum,dp[i]);// 统计结果最大和！
+        }
+        return maxSum;
+    }
+};
+```
+
+
+
+#### <49> [BM71-最长上升子序列(一) ](https://www.nowcoder.com/practice/5164f38b67f846fb8699e9352695cd2f?tpId=295&tqId=2281434&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+真的了，这个dp的思路非常地巧妙！我只能拍案叫绝！！！比较难想！需要反复刷才能记得住这种思路！！！
+
+```c++
+// time:O(n^2),最坏情况下是遍历了2层长度为n的数组！
+// space:O(n),使用辅助dp数组空间 且 长度为n
+class Solution {
+public:
+    int LIS(vector<int>& arr) {
+        //设置数组长度大小的动态规划辅助数组
+        vector<int> dp(arr.size(), 1); 
+        int res = 0;
+        for(int i = 1; i < arr.size(); i++){
+            for(int j = 0; j < i; j++){
+                //可能j不是所需要的最大的，因此需要dp[i] < dp[j] + 1
+                if(arr[i] > arr[j] && dp[i] < dp[j] + 1) {
+                    //i点比j点大，理论上dp要加1
+                    dp[i] = dp[j] + 1; 
+                    //找到最大长度
+                    res = max(res, dp[i]); 
+                }
+            }
+        }
+        return res;
+    }
+};
+// 这是根据我自己对于上面代码的理解写出来的版本：(我自己写的注释会更加利于自己的理解！)
+// time:O(n^2),最坏情况下是遍历了2层长度为n的数组！
+// space:O(n),使用辅助dp数组空间 且 长度为n
+class Solution {
+public:
+    int LIS(vector<int>& arr) {
+        int n = arr.size();
+        // dp[i]:表示到达最终下标为i的子序列中严格上升子序列的最大长度为dp[i]
+        vector<int> dp(n,1);
+        // 数组中，最少都会有一个元素的子序列算是严格递增的！
+        // so dp数组都初始化为1！
+        int res = 0;// 保存最长严格递增的子序列的长度！
+        for(int i = 1;i < n;++i){
+            for(int j = 0;j < i;++j){
+                // arr[j]有可能并不是使得dp[i]成为当前递增子序列长度最大的那个元素！
+                // 比如：     0 1 2 3 4 5 6
+                //    arr:  [6 3 1 5 2 3 7]
+                //     dp:  [1 1 1 1 1 1 1]
+                // 对于 arr[3] > arr[1] 且 dp[3] < dp[1] + 1,这表明arr[j]==arr[1]可以使得dp[i]成为最终下标到i为止的这个子序列中的递增子序列长度变为最大！==>dp[3] = dp[1]+1==2了！
+                // 而   arr[3] > arr[2] 但 dp[3] == dp[1] + 1了，此时,这表明arr[j]==arr[2]无法使得dp[i]成为最终下标到i为止的这个子序列中的递增子序列长度变为最大！
+                if(arr[i] > arr[j] && dp[i] < dp[j]+1){
+                    dp[i] = dp[j]+1;// 严格递增子序列长度+1
+                    res = max(res,dp[i]);// 更新最长严格递增的子序列的长度！
+                }
+            }
+        }
+        return res;
+    }
+};
 ```
 
