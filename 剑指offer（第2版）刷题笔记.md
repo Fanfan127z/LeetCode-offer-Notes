@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《49》==道题：
+### 目前累计总共有==《50》==道题：
 
 
 
@@ -3613,7 +3613,7 @@ public:
 
 这个题目要用dp来do确实很有难度，但是牛客的官方题解还算能理解的，主要 需要我画个图理解下这个代码的思路才能记住这种套路！！！
 
-<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/bm66.jpg" alt="bm66" style="zoom: 67%;" />
+![2](C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/2.jpg)
 
 ```c++
 // time:O(len1*len2),遍历对比2个字符串中的每一个字符！
@@ -3661,10 +3661,10 @@ public:
         for(int i = 1;i <= str1.size();++i){
             for(int j = 1;j <= str2.size();++j){
                 if(str1[i-1] == str2[j-1]){
-                    // 当前字符相等，dp相应位置置为其左上角的dp[i-1][j-1]+1!
+                    // 当前字符相等，则最长公共子串长度+1！dp相应位置置为其左上角的dp[i-1][j-1]+1!
                     dp[i][j] = dp[i-1][j-1]+1;
                 }else{// 当前字符不相当，dp相应位置置为0
-                    dp[i][j] = 0;
+                    dp[i][j] = 0;// 字符不等，此时以i为结尾的str1中的子串与以j结尾的str2中的子串的最长公共子串的长度就为0！
                 }
                 // 记录str1中的所统计到达最长公共子串的i的位置！
                 if(max < dp[i][j]){
@@ -3717,6 +3717,8 @@ public:
 // space:O(aim),辅助dp数组大小是aim+1,so O(aim+1)==O(aim)
 class Solution {
 public:
+    // dp动态规划的本质就是把大的结果问题都分割为若干相互联系的子问题，先deal前面首次出现过的，子问题
+    // 然后从这些子问题中得到原问题的结果！
     int minMoney(vector<int>& arr, int aim) {
         if(aim < 1)return 0;// 先处理一下特殊case！
         // dp[i]:代表要凑成i元所需要最少的货币数
@@ -3725,13 +3727,15 @@ public:
         dp[0] = 0;// 凑成0元所要货币数最少那肯定就是0个货币了！这个千万不能够忘记！
         // 外for遍历1元 ~ aim元，进而通过内for凑成他们所需最少货币数
         for(int i = 1;i <= aim;++i){
-            // 内for是真正求凑成i元所需的最少货币数
             for(int j = 0;j < arr.size();++j){
-                if(arr[j] <= i){// 要是大于当前面值为i元的货币你都没法用啊！！！
-                    // 当前货币面值小于我要凑成的总额时，这张货币 才能够被用上！
-                    dp[i] = min(dp[i],dp[i-arr[j]]+1);
-                    // dp动态规划的本质就是把问题都分割为若干相互联系的子问题，先deal子问题
-                    // 然后从这些子问题中得到原问题的结果！
+                // 内for是真正求解当前dp[i]的值的！
+                if(arr[j] <= i){
+                // 要是大于当前面值为i元的货币你都没法用啊！！！
+                // 当前货币面值小于我要凑成的总额时，这张货币 才能够被用上！
+                // 这也是保证了 i - arr[j] >= 0 不会使得访问dp数组越界下标出现的条件！
+                // 你拿了当前面值为arr[j]的货币来凑i
+                // 那肯定使用货币数量会+1啦！！！然后和自身本来的数量对比求最小值即可！
+                    dp[i] = min(dp[i-arr[j]]+1,dp[i]);
                 }
             }
         }
@@ -3876,3 +3880,82 @@ public:
 };
 ```
 
+
+
+#### ==<50>== [BM73-最长回文子串](https://www.nowcoder.com/practice/b4525d1d84934cf280439aeecc36f4af?tpId=295&tqId=25269&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目不论是牛客网还是leetcode上面的题目，我认为思路非常NB-PLUS!!!但是牛客网的官方题解会容易理解很多，但这都是基于我自己带入下面这个字符串画了完整的代码理解过程才能理解这种思路的！！！这道题目还是非常重要的！！！**（==不论是牛客还是leetcode上这两种提问方式我自己都必须要掌握！！！==）**
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/3.jpg" alt="3" style="zoom:80%;" />
+
+```c++
+// 暴力法肯定就是2层for循环啦！
+// 然后统计A[i,j]这个区间的回文子串最大长度 并更新结果res中保存的回文子串最大长度！
+// 但显然这么do不合适！！！
+
+// time:O(n^2),其中n是字符串A的长度,最坏情况下，遍历一轮字符串A中的各个字符后，每个单字符 or 每个双字符都需要扩展O(n)的时间复杂度
+// space:O(1),没使用额外的辅助空间！
+class Solution {
+public:
+    int getLongestPalindrome(string A) {
+        int maxlen = 1;// 不论再怎么样，一个字符组成的字符串也属于回文串！
+        // 以每个点为中心
+        for(int i = 0;i < A.size()-1;++i){
+            // 分奇数长度和偶数长度 向2边扩展
+            maxlen = max({maxlen,middleExpand(A,i,i),middleExpand(A,i,i+1)});
+        }
+        return maxlen;
+    }
+    int middleExpand(const string& s,int begin,int end){
+        // 每个中心点开始扩展
+        while(begin >= 0 && end < s.size() && s[begin] == s[end]){
+            begin--,end++;// 继续进行下一轮中心扩展法！
+        }
+        // 返回长度
+        return end - begin - 1;
+    }
+};
+
+// 下面这个版本是leetcode上面同一个题目的代码：（有一点点区别！）
+// leetcode这里的提问是 求最长回文子串 这个字符串！
+// ，而牛客网是         求最长回文子串的长度而已！
+// so代码会有一些些的区别！
+// time:O(n^2),n是字符串长度,最坏情况下在遍历整个str的每个单字符or双字符时，会有中心扩展O(n)的时间复杂度！
+// space:O(1),没有使用额外的辅助空间！
+class Solution {
+private:
+    pair<int,int> p;// 用来保存最终最长回文子串的[begin,end]下标位置！
+    pair<int,int> tmp;// 用来临时保存最终最长回文子串的[begin,end]下标位置！
+public:
+    string longestPalindrome(string s) {
+        int maxlen = 1;// 不论再怎么样，一个字符组成的字符串也属于回文串！
+        p.first = p.second = 0;
+        for(int i = 0;i < s.size()-1;++i){// 这里i < s.size - 1是为了防止中心扩展时越界！
+            int t_odd  = middleExpand(s,i,i);// 计算奇数为中心的回文子串最长的长度！
+            int t_even = middleExpand(s,i,i+1);// 计算偶数为中心的回文子串最长的长度！
+            // 更新最长回文子串长度 的同时，更新该最长回文子串的[begin,end]下标位置！
+            if(t_odd > maxlen && t_odd > t_even){
+                maxlen = t_odd;
+            }else if(t_even > maxlen && t_even > t_odd){
+                maxlen = t_even;
+            }
+        }
+        return s.substr(p.first,p.second-p.first+1);// 根据[begin,end]返回原string的最长回文子串！
+    }
+    int middleExpand(const string& s,int begin,int end){
+        while(begin >= 0 && end < s.size() && s[begin] == s[end]){
+            tmp.first = begin,tmp.second = end;// 记录最大的那个的下标！
+            if(tmp.second - tmp.first > p.second - p.first){// 只保存最长的那个回文子串 的 [begin,end]下标位置！
+                    p.first = tmp.first;
+                    p.second = tmp.second;
+            }
+            begin--,end++;// 继续进行下一轮中心扩展法！
+        }
+        return end - begin - 1;// 返回使用中心扩展法获得的最长回文子串的长度！
+    }
+};
+```
+
+
+
+#### <51> [BM71-最长上升子序列(一) ](https://www.nowcoder.com/practice/5164f38b67f846fb8699e9352695cd2f?tpId=295&tqId=2281434&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
