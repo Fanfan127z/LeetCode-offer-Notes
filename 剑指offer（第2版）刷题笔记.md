@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《50》==道题：
+### 目前累计总共有==《51》==道题：
 
 
 
@@ -3958,4 +3958,50 @@ public:
 
 
 
-#### <51> [BM71-最长上升子序列(一) ](https://www.nowcoder.com/practice/5164f38b67f846fb8699e9352695cd2f?tpId=295&tqId=2281434&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### ==<51>== [BM75-编辑距离(一) ](https://www.nowcoder.com/practice/6a1483b5be1547b1acd7940f867be0da?tpId=295&tqId=2294660&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目是==面试中非常常见并常考==的题目！！！我也是看了牛客官方的答案，并自己按照代码的意思画图后才知道能这么干的！
+
+这个思路我觉得只要记忆下来就ok了，并不是很难写，但的确很难写出来！！！
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/4.jpg" alt="4" style="zoom:80%;" />
+
+```c++
+// time:O(len1*len2+len1+len2)==O(len1*len2),主要是2层for循环遍历dp数组的耗时！
+// space:O((len1+1)*(len2+1))==O(len1*len2),使用2维的dp辅助数组，大小是(len1+1)*(len2+1)
+class Solution {
+public:
+    int editDistance(string str1, string str2) {
+        int len1 = str1.size();
+        int len2 = str2.size();
+        // dp[i][j]:表示到str1[i]和str2[j]为止的子串需要的编辑距离就是dp[i][j]!
+        vector<vector<int>> dp(len1+1,vector<int>(len2+1,0));
+        // 初始化dp数组的边界！
+        for(int i = 1;i <= len1;++i)dp[i][0] = dp[i-1][0]+1;
+        for(int i = 1;i <= len2;++i)dp[0][i] = dp[0][i-1]+1;
+        // 外for遍历第一个字符串的每个位置
+        for(int i = 1;i <= len1;++i){
+            // 内for遍历第二个字符串的每个位置
+            for(int j = 1;j <= len2;++j){
+                // 若是字符相同，则此处不用编辑了，因为相等了
+                if(str1[i-1] == str2[j-1]){// 字符一样，无需任何的编辑操作，故等于其前一个对应的2个子串的编辑距离！
+                    // 直接等于二者前一个的距离，相等了就不用do增删or改等编辑操作了！
+                    dp[i][j] = dp[i-1][j-1];
+                }
+                else{
+                    // 此时2个字符串对应的字符不相等，但是，要想让字符相等，则既有可能是编辑str2[j],str1[i-1]不动，又或者是编辑str1[i],str2[j-1]不动，要么就是让str1[i-1],str2[j-1]的基础上，增加or删除一个字符就使得当前到str1的i下标为止，str2的j下标为止的字符串相等了！
+                    // 改str1[i] or str2[j]
+                    // 增删都是在str1[i-1],str2[j-1]的基础上do一个操作即可！
+                    // so最后我们 选取最小的距离 加上此处编辑距离+1！因为不论是增删改（改有2种case）
+                    dp[i][j] = min({dp[i-1][j-1],dp[i][j-1],dp[i-1][j]})+1;// 不论如何编辑，操作都是加1个的！
+                }
+            }
+        }
+        return dp[len1][len2];
+    }
+};
+```
+
+
+
+#### <52> [BM75-编辑距离(一) ](https://www.nowcoder.com/practice/6a1483b5be1547b1acd7940f867be0da?tpId=295&tqId=2294660&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
