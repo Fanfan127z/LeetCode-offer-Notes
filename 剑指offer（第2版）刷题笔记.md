@@ -1435,7 +1435,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《51》==道题：
+### 目前累计总共有==《54》==道题：
 
 
 
@@ -4004,4 +4004,74 @@ public:
 
 
 
-#### <52> [BM75-编辑距离(一) ](https://www.nowcoder.com/practice/6a1483b5be1547b1acd7940f867be0da?tpId=295&tqId=2294660&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### <52> [BM78-打家劫舍(一) ](https://www.nowcoder.com/practice/c5fbf7325fbd4c0ea3d0c3ea6bc6cc79?tpId=295&tqId=2285793&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这打家劫舍问题，我就是do了N次都搞不懂搞不会！！！！没办法了，就是背思路吧！！！
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/5.jpg" alt="5" style="zoom: 50%;" />
+
+```c++
+// time:O(n),遍历了一遍nums数组，其中n是其长度
+// space:O(n),使用了辅助dp数组空间，长度就是n
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        // dp[i]:表示长度为i的数组，最多能够偷取dp[i]元！
+        vector<int> dp(n+1,0);
+        dp[0] = 0;// 偷长度为0的数组，你没法偷，so利益是0元！
+        dp[1] = nums[0];// 长度为1只能偷第一家，此时收益最大！
+        for(int i = 2;i <= n;++i){
+            // 这里的i在dp中为数组长度，在nums中为下标。因此当计算本轮人家能够偷的钱时，要用nums[i-1]!而dp不用-1！这是非常key 的一个点！
+            // 对于每个人家，可选择偷or不偷
+            // 当选择偷本人家时，当前收益 dp[i] = dp[i-2] + nums[i-1];因为不能偷相邻人家的钱，因此必须要是偷完上上家所获得的钱+偷本人家所获得的钱才算当前收益！
+            // 当选择不偷本人家时，当前收益 dp[i] = dp[i-1];// 因为不能偷相邻人家的钱，因此本轮收益==偷完上一个人家后所获得的收益！
+            // 然后因为要获得最大的收益，因此上面2种case取max即可！
+            dp[i] = max(dp[i-1],dp[i-2]+nums[i-1]);
+        }
+        return dp[n];
+    }
+};
+```
+
+
+
+#### <53> [BM78-打家劫舍(二) ](https://www.nowcoder.com/practice/a5c127769dd74a63ada7bff37d9c5815?tpId=295&tqId=2285837&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+这个题目是打家劫舍（一）的小升级版（每户人家都处于一个环形圈圈内），这个思路确实难想，但是牛客网答案是真的非常清晰！把它背下来也不是不行的！！！
+
+```c++
+// time:O(n*2)==O(n),遍历了nums数组2次！
+// space:O(n),使用了辅助dp数组，长度是n
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        /* 
+            主要思路：
+            因为每户人家都处于一个环形圈圈中，这会造成第一户人家和最后一户人家是相邻的！
+            因此，要是偷了第一户人家就一定不能偷最后户人家（因为相邻）
+            同理，要是投了最后一户人家，就一定不能偷第一户人家（因为相邻）
+            知道了这题只有这2种分类讨论的cases后，剩下的思路就和打家劫舍（一）没有啥区别的了！
+        */
+        int n = nums.size();
+        // dp[i]:表示对于长度为i的数组nums，最多可以偷到dp[i]元！
+        vector<int> dp(n+1,0);
+        dp[0] = 0,dp[1] = nums[0];
+        // 1-先偷第一户人家，不偷最后一户人家
+        for(int i = 2;i < n;++i){// 这里不能=n是因为不能够偷最后一户人家的钱！
+            dp[i] = max(dp[i-1],dp[i-2]+nums[i-1]);
+        }
+        int res1 = dp[n-1];
+        // 2-再偷最后一户人家，不偷第一户人家
+        dp.clear();// 清除dp的原数据
+        dp[0] = 0,dp[1] = 0;// 既然不偷，那获得的收益肯定是0元啦！
+        for(int i = 2;i <= n;++i){// 这里能=n是因为能够偷最后一户人家的钱！
+            dp[i] = max(dp[i-1],dp[i-2]+nums[i-1]);
+        }
+        int res2 = dp[n];
+        // 这2种cases取max的dp[i]返回即可！
+        return max(res1,res2);
+    }
+};
+```
+
