@@ -1437,6 +1437,15 @@ public:
 
 ### 目前累计总共有==《54》==道题：
 
+```c++
+// 注意：
+// 对于动态规划的题目，一定要记住carl哥的dp5部曲中的4部曲！！！
+// 1-给出明确的dp数组的下标含义
+// 2-给出dp数组的初始化
+// 3-确定dp数组的遍历顺序
+// 4-确定递归公式
+```
+
 
 
 #### <1> [BM2-链表内指定区间反转](https://www.nowcoder.com/practice/b58434e200a648c589ca2063f1faf58c?tpId=295&tqId=654&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
@@ -3720,7 +3729,6 @@ public:
     // dp动态规划的本质就是把大的结果问题都分割为若干相互联系的子问题，先deal前面首次出现过的，子问题
     // 然后从这些子问题中得到原问题的结果！
     int minMoney(vector<int>& arr, int aim) {
-        if(aim < 1)return 0;// 先处理一下特殊case！
         // dp[i]:代表要凑成i元所需要最少的货币数
         vector<int> dp(aim+1,aim+1);
         // 初始化dp数组的数值为aim+1是为了方便判断是否能够组成aim
@@ -3882,6 +3890,10 @@ public:
 
 
 
+
+
+
+
 #### ==<50>== [BM73-最长回文子串](https://www.nowcoder.com/practice/b4525d1d84934cf280439aeecc36f4af?tpId=295&tqId=25269&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
 
 这个题目不论是牛客网还是leetcode上面的题目，我认为思路非常NB-PLUS!!!但是牛客网的官方题解会容易理解很多，但这都是基于我自己带入下面这个字符串画了完整的代码理解过程才能理解这种思路的！！！这道题目还是非常重要的！！！**（==不论是牛客还是leetcode上这两种提问方式我自己都必须要掌握！！！==）**
@@ -3986,7 +3998,7 @@ public:
                 // 若是字符相同，则此处不用编辑了，因为相等了
                 if(str1[i-1] == str2[j-1]){// 字符一样，无需任何的编辑操作，故等于其前一个对应的2个子串的编辑距离！
                     // 直接等于二者前一个的距离，相等了就不用do增删or改等编辑操作了！
-                    dp[i][j] = dp[i-1][j-1];
+                    dp[i][j] = dp[i-1][j-1];// 2字符相等时，不需额外增加编辑的操作了！
                 }
                 else{
                     // 此时2个字符串对应的字符不相等，但是，要想让字符相等，则既有可能是编辑str2[j],str1[i-1]不动，又或者是编辑str1[i],str2[j-1]不动，要么就是让str1[i-1],str2[j-1]的基础上，增加or删除一个字符就使得当前到str1的i下标为止，str2的j下标为止的字符串相等了！
@@ -4074,4 +4086,70 @@ public:
     }
 };
 ```
+
+
+
+#### <54> [BM80-买卖股票的最好时机(一)](https://www.nowcoder.com/practice/64b4262d4e6d4f6181cd45446a5821ec?tpId=295&tqId=625&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+在carl哥的网站上do过很多次了，但是就是记不住思路！！！       
+
+```c++
+// time:O(n),其中n是prices数组的长度
+// space:O(n*2)==O(n),使用了辅助数组空间dp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        // dp[i][0]:表示到第i天为止，持有股票所得最大利润
+        // dp[i][1]:表示到第i天为止，不持有股票所得最大利润
+        vector<vector<int>> dp(n,vector<int>(2,0));
+        dp[0][0] = -prices[0];
+        dp[0][1] = 0;
+        for(int i=1;i<n;++i){
+            dp[i][0] =max(dp[i-1][0],0-prices[i]);// 因为买入股票之前必须要卖出才能够继续买入，因此必须从0开始计算当前持有的股票所获得最大利益
+            dp[i][1] = max(dp[i-1][1],dp[i-1][0]+prices[i]);// 卖出股票时，必须这么计算：昨天持有股票要+上今天卖出股票后所获得最大利益,要么不卖出，那就是dp[i-1][1]
+        }
+        return dp[n-1][1];
+    }
+};
+```
+
+
+
+
+
+
+
+#### <55> [BM81-买卖股票的最好时机(二)](https://www.nowcoder.com/practice/9e5e3c2603064829b0a0bbfca10594e9?tpId=295&tqId=1073471&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+
+在carl哥的网站上do过很多次了，但是就是记不住思路！！！       
+
+这道题目与买卖股票的最好时机(一)的区别是：本题总共可以买卖多次
+
+```c++
+// time:O(n),n是prices数组的长度！
+// space:O(n)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        // write code here
+        int n=prices.size();
+        vector<vector<int>> dp(n,vector<int>(2,0));
+        dp[0][0]=-prices[0];// 第0天持有股票所得最大利润
+        dp[0][1]=0;// 第0天不持有股票所得最大利润
+        for(int i=1;i<n;++i){
+            // 对于持有状态，1-可能前几天的持有的股票还没卖呢，就不能继续买入，则当前持有股票所得最大利益是dp[i-1][0]
+            // 对于持有状态，2-可能今天要买入股票，则当前持有股票所得最大利益是dp[i-1][1]=dp[i-1][1]-prices[i];我卖出去之后才能继续买入！
+            // 同理：
+            // 对于不持有状态，1-可能前几天的持有的股票已经卖了或者还没买，则当前持有股票所得最大利益是dp[i-1][1]
+            // 对于不持有状态，2-可能今天就要卖出股票了，则当前持有股票所得最大利益就是dp[i-1][0]+prices[i];
+            dp[i][0]=max(dp[i-1][0],dp[i-1][1]-prices[i]);
+            dp[i][1]=max(dp[i-1][1],dp[i-1][0]+prices[i]);
+        }
+        return dp[n-1][1];
+    }
+};
+```
+
+
 
