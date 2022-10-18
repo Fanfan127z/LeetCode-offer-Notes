@@ -4153,3 +4153,105 @@ public:
 
 
 
+
+
+
+
+
+
+## **牛客网  《剑指offer 》刷题笔记**
+
+这里的题目都是我自己一刷时没do出来的（看题解） or do的有些磕磕绊绊需要想挺久才do出来的题目！！！（暗示我自己这些剑指offer的题目为肯定是需要2刷甚至3or4刷的！）
+
+
+
+注意：**我个人认为太过于难的题目我就不总结了！**
+
+### 目前累计总共有==《2》==道题：
+
+虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
+
+#### <1> [JZ5-替换空格](https://www.nowcoder.com/practice/0e26e5551f2b489b9f58bc83aa4b6c68?tpId=265&tqId=39209&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D1%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+```c++
+class Solution {
+public:
+    string replaceSpace(string s) {
+        // 这里我直接在原地进行操作！
+        // time:O(n),space:O(1)
+        int oldSize = s.size(),spaceSize = 0;
+        for(char ch : s){
+            if(ch == ' ')spaceSize++;
+        }
+        int newSize = oldSize + spaceSize * 2;
+        s.resize(newSize);// 原地弄成新的字符串长度！
+        // 双指针法！
+        int index = newSize - 1;
+        for(int i = oldSize-1;i>=0;--i){
+            if(s[i]!=' '){
+                s[index--] = s[i];
+            }else{
+                // 把空格子换为%20
+                s[index] = '0';
+                s[index-1] = '2';
+                s[index-2] = '%';
+                index-=3;
+            }
+        }
+        return s;
+    }
+};
+```
+
+
+
+#### <2> [JZ8-二叉树的下一个节点](https://www.nowcoder.com/practice/9023a0c988684a53960365b889ceaf5e?tpId=265&tqId=39212&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D1%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+
+
+这个题目这么简单我居然没do出来，我人都傻了！！！不应该啊lzf！！！
+
+```c++
+/*
+struct TreeLinkNode {
+    int val;
+    struct TreeLinkNode *left;
+    struct TreeLinkNode *right;
+    struct TreeLinkNode *next;
+    TreeLinkNode(int x) :val(x), left(NULL), right(NULL), next(NULL) {
+        
+    }
+};
+*/
+// time:O(n*2)==O(n),最坏case下遍历2遍整棵树！
+// space:O(n),使用了额外的辅助空间v来存储中序遍历后的各个节点！
+class Solution {
+private:
+    vector<TreeLinkNode* > v;
+    void middleTraversal(TreeLinkNode* node){
+        if(node == nullptr)return;
+        // 中序遍历是 左中右
+        middleTraversal(node->left);
+        v.push_back(node);
+        middleTraversal(node->right);
+    }
+public:
+    TreeLinkNode* GetNext(TreeLinkNode* pNode) {
+        TreeLinkNode * node = pNode;
+        while(node->next)node = node->next;// 找到当前树的根节点
+        // do中序遍历，按左中右的顺序来存储all的节点！！！
+        middleTraversal(node);
+        // 在中序节点数组中找到该节点的下一个节点即可!
+        for(int i=0;i < v.size();++i){
+            if(v[i] == pNode && i + 1< v.size())return v[i+1];
+        }
+        return nullptr;
+    }
+};
+```
+
+
+
+
+
+#### <3> [JZ8-二叉树的下一个节点](https://www.nowcoder.com/practice/9023a0c988684a53960365b889ceaf5e?tpId=265&tqId=39212&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D1%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
