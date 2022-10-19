@@ -4238,7 +4238,7 @@ private:
 public:
     TreeLinkNode* GetNext(TreeLinkNode* pNode) {
         TreeLinkNode * node = pNode;
-        while(node->next)node = node->next;// 找到当前树的根节点
+        while(node->next)node = node->next;// 先找到整棵树的根节点！这一步very key！
         // do中序遍历，按左中右的顺序来存储all的节点！！！
         middleTraversal(node);
         // 在中序节点数组中找到该节点的下一个节点即可!
@@ -4254,4 +4254,101 @@ public:
 
 
 
-#### <3> [JZ8-二叉树的下一个节点](https://www.nowcoder.com/practice/9023a0c988684a53960365b889ceaf5e?tpId=265&tqId=39212&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D1%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+#### <3> [JZ12-矩阵中的路径](https://www.nowcoder.com/practice/2a49359695a544b8939c77358d29b7e6?tpId=265&tqId=39216&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目还真的是蛮难的！考记忆化**树形**深搜dfs！这个思路不容易想的！！！背下来！！！多copy即可！（画个图就能理解下面的算法思路了！不画图光用脑子想肯定是没法理解的！！！）
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/7.jpg" alt="7" style="zoom: 50%;" />
+
+```c++
+class Solution {
+public:
+    bool hasPath(vector<vector<char> >& matrix, string word) {
+        // 这个题目很明显实在 考察 记忆化dfs深搜索这个知识点！
+        // 优先处理特殊情况
+        if(matrix.size() == 0)return false;
+        int row = matrix.size();// 行数
+        int col = matrix[0].size();// 列数
+        // 初始化flag矩阵记录看是否走过！
+        vector< vector<bool> > flag(row,vector<bool>(col,false));
+        // 遍历矩阵找起点
+        for(int i=0;i<row;++i){
+            for(int j=0;j<col;++j){
+                // 通过dfs找到路径
+                if(dfs(matrix,row,col,i,j,word,0,flag))return true;
+            }
+        } 
+        return false;
+    }
+    bool dfs(vector<vector<char>>& matrix,int row,int col,int i,int j,string word,int k,vector<vector<bool>>& flag){
+        if(i < 0 || i >= row || j < 0 || j >= col || (matrix[i][j] != word[k]) || (flag[i][j] == true) ){
+            // 但凡是下标越界，字符不匹配，已经遍历过的都不能重复！
+            return false;
+        }
+        // k为记录当前第几个字符
+        if(k == word.size() - 1)return true;
+        flag[i][j] = true;
+        // 该节点向任意方向可行就可
+        if  ( 
+            dfs(matrix,row,col,i-1,j,word,k+1,flag) ||  
+            dfs(matrix,row,col,i+1,j,word,k+1,flag) ||
+            dfs(matrix,row,col,i,j-1,word,k+1,flag) ||
+            dfs(matrix,row,col,i,j+1,word,k+1,flag)   
+            ){return true;}
+        // 经过此格子的此路径不符合题目要求，so回溯，让此格子就未被占用
+        flag[i][j] = false;// ==> 回溯！
+        return false;
+    }
+};
+
+// 我自己理解了上面的代码之后，自己写的版本:
+class Solution {
+public:
+    bool hasPath(vector<vector<char> >& matrix, string word) {
+        // 这个题目需要用到一种叫做，记忆化-树形深搜dfs的算法思路！
+        // 先处理下特殊的case
+        if(matrix.size() == 0)return false;// 一旦居正大小为0，则返回false！
+        int n = matrix.size(),m=matrix[0].size();
+        vector<vector<bool>> flag(n,vector<bool>(m,false));
+        // flag是标记二维数组，大小和矩阵一样！
+        // 用来标记matrix矩阵中哪个字符已经走过了！就不能够再走了！
+        for(int i=0;i<n;++i){
+            for(int j=0;j<m;++j){
+                if(dfs(matrix,word,n,m,i,j,0,flag))return true;
+                // 因为没法确定矩阵中的哪个字符开头能够找到word的路径
+                // so遍历矩阵中的每个字符来找word的开头
+                // 并且继续树形dfs下去！找到这样一条路径就return true即可了！
+            }
+        }
+        return false;
+    }
+    bool dfs(vector<vector<char>>& matrix,string word,int n,int m,int i,int j,int k,vector<vector<bool>> & flag){
+        // 先处理下越界的情况！
+        if(i<0 || i>=n || j<0||j>=m||(matrix[i][j] != word[k]) || flag[i][j] == true){
+            return false;
+
+            // 越界or当前矩阵元素与word中的对应字符不同 or当前字符已经走过了，用过了，就返回false！表示不存在这样一条路径==word！
+        }
+        // 判断是否该路径组成的字符串已经==word了！
+        if(k == word.size() - 1)return true;
+        // if没达到word，就继续记忆化树形dfs深搜下去即可！
+        flag[i][j] = true;
+        if(
+            dfs(matrix,word,n,m,i-1,j,k+1,flag)||// 上
+            dfs(matrix,word,n,m,i+1,j,k+1,flag)||// 下
+            dfs(matrix,word,n,m,i,j-1,k+1,flag)||// 左
+            dfs(matrix,word,n,m,i,j+1,k+1,flag)  // 右
+        ){
+            return true;
+        }
+        // 达成不了word,就不走该字符这条路了！
+        flag[i][j] = false;// ==>相当于回溯的操作！
+        return false;
+    }
+};
+```
+
+
+
+
+
