@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《2》==道题：
+### 目前累计总共有==《4》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4352,3 +4352,38 @@ public:
 
 
 
+#### <4> [JZ31-栈的压入、弹出序列](https://www.nowcoder.com/practice/d77d11405cc7470d82554cb392585106?tpId=265&tqId=39233&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目我好像在leetcode上面do过了的！解题的思路有点难度的！我看了牛客官网的answer后还思考画图了一会儿，确实不简单！
+
+推荐使用题目给出的例子：pushV:[1,2,3,4,5];popV:[4,5,3,2,1]来画个图你就能够理解这个代码了！
+
+```c++
+// time:O(n),n是push or pop数组的长度,遍历了整个push or pop数组
+// space:O(n),使用了辅助数组空间stack，最坏情况下stack的长度会达到n！
+class Solution {
+public:
+    // 题目思路主要是：要检查 弹出序列popV 是否合法！
+    // 一个栈的压入顺序pushV，可以对应多种 弹出序列popV
+    // 因此重点就是要比较栈的弹出序列，因此才有了代码中for循环遍历弹出序列来do比较的操作！
+    bool IsPopOrder(vector<int> pushV,vector<int> popV) {
+        int pushSize = pushV.size();
+        stack<int> stk;// 辅助栈空间！
+        int in = 0;// 入栈下标！
+        // for循环遍历弹出序列 检查其是否合法！
+        for(int out = 0;out < popV.size();++out){
+            while(in < pushSize && (stk.empty() || stk.top() != popV[out])){
+                stk.push(pushV[in++]);
+            }
+            if(stk.top() == popV[out]){
+                stk.pop();
+            }else return false;// 只要有不等的，就马上返回fasle！表示不可能是这个弹出序列popV！也即该弹出序列不合法！
+        }
+        return true;// 能够经得住for循环的“洗礼“,那自然就是一个合法的弹出序列了！
+    }
+};
+```
+
+
+
+#### <5> [JZ31-栈的压入、弹出序列]()
