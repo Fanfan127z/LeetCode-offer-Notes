@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《4》==道题：
+### 目前累计总共有==《6》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4373,7 +4373,7 @@ public:
         // for循环遍历弹出序列 检查其是否合法！
         for(int out = 0;out < popV.size();++out){
             while(in < pushSize && (stk.empty() || stk.top() != popV[out])){
-                stk.push(pushV[in++]);
+                stk.push(pushV[in++]);// 压入元素到辅助栈空间中去！
             }
             if(stk.top() == popV[out]){
                 stk.pop();
@@ -4386,4 +4386,184 @@ public:
 
 
 
-#### <5> [JZ31-栈的压入、弹出序列]()
+#### <5> [JZ26-树的子结构](https://www.nowcoder.com/practice/6e196c44c7004d15b1610b9afca8bd88?tpId=265&tqId=39228&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目在leetcode上的剑指offer上面我已经do过一次了！但在这里还是do不出来！！！这个思路还是在leetcode高赞评论区答案里面学来的，真的不太好想呀！！！只有背下来了！
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+// 学的评论区的高赞答案写的！！！太NB了！
+// 可太难想了这个思路！
+/*
+    思路：1-先在树A中找到头结点 == 树B头结点的节点
+         2-找到之后再将此时的A子结构的left和right 与 B的left和right逐个do队比，即可判断A是否含有B这样的子结构了！
+*/
+class Solution {
+public:
+    bool isSubStructure(TreeNode* A, TreeNode* B) {
+        if(A == NULL || B == NULL) return false;//如果A到底了 或 B为空 则没有匹配到
+        if(A->val == B->val)//找到可能的开头
+        {
+            if(detection(A, B)) return true;//伴随判断,找到了直接返回
+        }
+        return isSubStructure(A->left, B) || isSubStructure(A->right, B);//继续寻找可能的开头
+    }
+    bool detection(TreeNode* A, TreeNode* B)//根据B开始向下匹配
+    {
+        if(B == NULL) return true;//匹配到头了，直接返回true
+        if(A == NULL || A->val != B->val) return false;//B有值,A没有 或者 A B值不同 返回假
+        return detection(A->left, B->left) && detection(A->right, B->right);//向下匹配 见假为假
+    }
+};
+
+// 这是我理解了上面的代码后写出来的版本：
+class Solution {
+public:
+	// 好像在leetcode上面已经do过了！
+    bool HasSubtree(TreeNode* A, TreeNode* B) {
+       // 主要思路是：先在A中找到与B这棵树的头结点相同的节点
+	   // 然后在此基础上，再逐个逐个让A的left与B的left，A的right和B的right来do对比，如果都一样就说明是子结构！否则就不是！
+	   if(A == nullptr || B == nullptr)return false;// 这里题目规定了空树不是任何一棵树的子结构！
+	   if(A->val == B->val){
+		   if(traversal(A,B))return true;
+	   }
+	   return HasSubtree(A->left,B) || HasSubtree(A->right,B);
+    }
+	bool traversal(TreeNode* A,TreeNode* B){
+		if(B == nullptr)return true;// if B遍历到空节点了说明B这个子结构就存在于A中！
+		// if A遍历到空节点但B还有节点 or A节点的值不等于B对应节点的值，此时就说明B不是A的子结构！
+		if(A == nullptr || A->val != B->val)return false;// 中
+		// 然后如果A和B对应节点不为空且value一样的case下，就再继续递归判断下A的left right 与B对应的left和right是否都一样！
+		bool left = traversal(A->left,B->left);// 左
+		bool right = traversal(A->right,B->right);// 右
+		return left && right;
+	}
+};
+```
+
+
+
+
+
+
+
+#### ==<6>== [JZ26-二叉搜索树的后序遍历序列](https://www.nowcoder.com/practice/a861533d45854474ac791d90e447bafd?tpId=265&tqId=39235&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目真的难！！！我在leetcode上面原来已经do过一次的了！但是看牛客官方的非递归的答案我看不懂！！！最后还是看B站一个小姐姐up讲解的剑指offer才明白的！！！（用到了分治递归的思想！！！）
+
+[LeetCode力扣刷题 | 剑指Offer 33. 二叉搜索树的后序遍历序列](https://www.bilibili.com/video/BV1FK4y1j73k/?spm_id_from=333.337.search-card.all.click&vd_source=b050ab0adaffa51f5ad24d77efa40057)
+
+
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/8.JPG" alt="8" style="zoom:50%;" />
+
+
+
+<img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/9.JPG" alt="9" style="zoom: 80%;" />
+
+```c++
+class Solution {
+public:
+    // 看了评论区“递归和栈两种方式解决，最好的击败了100%”的用户这个标题的大佬才do出来的！
+    // 分治递归法：(左闭右闭区间)
+    // 思路：对于BST来说，后序遍历后最后一个元素必然是根节点root
+    // 然后后续遍历的第一个大于root的节点到root的前一个节点这个区间内的节点必然为BST的右子树
+    // 然后从前面到第一个大于root的节点的前一个节点的区间必然是BST的左子树
+    // 即：[left,第一个大于当前root节点-1]是BST的左子树区间
+    //    [第一个大于当前root节点,root节点-1]是BST的右子树区间
+    // 若不满足以上的2个条件的话，就一定不是BST了！
+    bool traversal(const vector<int>& postorder,int left,int right){
+        /*
+            当left == right时说明此时分治到只剩下一个节点值了，就没必要继续分治了！直接认定是BST
+            当left > right时说明此时分治到越了数组的界了，就没必要继续了！直接认定是BST
+        */
+        if(left >= right)return true;
+        int fenGeIdx = left;// 分割点
+        int curRoot = postorder[right];// 取得本轮递归根节点值
+        while(postorder[fenGeIdx] < curRoot)fenGeIdx++;
+        int tmp = fenGeIdx;
+        /*
+            因为要确认当前的[第一个大于当前root节点,root节点-1]区间必须都要大于curRoot值
+            才能确定是BST当前根节点curRoot的右子树！
+            若有小于curRoot值的就马上return false表示不是BST了！
+        */
+        while(tmp < right){
+            if(postorder[tmp++] < curRoot)return false;
+        }
+        tmp = fenGeIdx-1;
+        /*
+            同上理，要确定[left,第一个大于当前root节点-1]是BST的左子树区间这个区间的all节点值
+            都要小于当前根节点curRoot的值！才符合BST！
+        */
+        while(tmp >= left){
+            if(postorder[tmp--] > curRoot)return false;
+        }
+        return traversal(postorder,left,fenGeIdx-1) && traversal(postorder,fenGeIdx,right-1);
+    }
+    bool VerifySquenceOfBST(vector<int>& postorder) {
+        // BST的中序遍历一定是升序的(从小到大的)！
+        // 这个特性是一定要用上的！
+        return traversal(postorder,0,postorder.size()-1);
+    }
+};
+// 下面是我理解了上面的代码后写出来的版本：
+// 本题用到了分治递归的思想！
+/*
+    一个BST，其后序遍历到last一个元素必然是根节点元素
+    然后从前面到第一个大于当前last节点元素值的前一个元素这个区间必然是BST的左子树区间
+    从大于当前last节点元素值的第一个元素到last的前一个元素这个区间必然是BST的右子树区间
+    if 不满足上面这2个条件，那么就一定不是BST的后序遍历序列了！        
+*/
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        return traversal(postorder,0,postorder.size()-1);// 左闭右闭区间！
+    }
+    bool traversal(const vector<int>& p,int l,int r){
+        if(l >= r)return true;// 剩下一个元素说明满足条件！
+        // 先找到第一个大于p[r]这个last节点元素值的第一个元素值do为分割点！
+        // 这个过程相当于是先判断当前的左子树区间是否合法（符合BST的规则）
+        // 当前的root->val == p[r]!
+        int fenGeIdx = l;
+        while(p[fenGeIdx] < p[r])fenGeIdx++;// 左子树节点值必然小于root->val
+        // 然后再判断当前的右子树区间是否合法（符合BST的规则）
+        int i = fenGeIdx;
+        while(p[i] > p[r])i++;// 右子树节点值必然大于root->val
+        // 走到这里就说明当前的左右子区间符合BST的规则！
+        // 就继续分治递归左右子区间看是否还符合BST的规则！（大问题分解为小问题,so可递归）
+        bool leftMeet = traversal(p,l,fenGeIdx-1);
+        bool rightMeet = traversal(p,fenGeIdx,r-1);
+        // 当然还需要判断是否符合i==r，如果都到不了r说明根本就不是一个正确的BST的后序遍历到序列！
+        return i == r && leftMeet && rightMeet;
+    }
+};
+
+// 简短不带注释版本：
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        return traversal(postorder,0,postorder.size()-1);// 左闭右闭区间！
+    }
+    bool traversal(const vector<int>& p,int l,int r){
+        if(l >= r)return true;
+        int fenGeIdx = l;
+        while(p[fenGeIdx] < p[r])fenGeIdx++;
+        int i = fenGeIdx;
+        while(p[i] > p[r])i++;
+        return i == r && traversal(p,l,fenGeIdx-1) && traversal(p,fenGeIdx,r-1);
+    }
+};
+```
+
+
+
+#### <7> [JZ26-树的子结构]()
+
