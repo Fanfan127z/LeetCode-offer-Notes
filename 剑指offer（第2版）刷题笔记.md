@@ -4455,7 +4455,7 @@ public:
 
 
 
-#### ==<6>== [JZ26-二叉搜索树的后序遍历序列](https://www.nowcoder.com/practice/a861533d45854474ac791d90e447bafd?tpId=265&tqId=39235&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+#### ==<6>== [JZ33-二叉搜索树的后序遍历序列](https://www.nowcoder.com/practice/a861533d45854474ac791d90e447bafd?tpId=265&tqId=39235&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
 
 这个题目真的难！！！我在leetcode上面原来已经do过一次的了！但是看牛客官方的非递归的答案我看不懂！！！最后还是看B站一个小姐姐up讲解的剑指offer才明白的！！！（用到了分治递归的思想！！！）
 
@@ -4566,4 +4566,49 @@ public:
 
 
 #### <7> [JZ26-树的子结构]()
+
+这个题目命名在leetcode上面已经do得很熟悉了，但是就是在牛客上没写好思路，思路不完整！！！
+
+```c++
+class Solution {
+private:
+	vector<vector<int>> res;// 保存all路径的结果
+	vector<int> tmp;// 临时保存一条路径的结果
+public:
+	// 这个题目leetcode上面do过很多次了！
+	// 因为要找all的路径，因此必须要遍历整棵树一遍！回溯法！且不需要递归的返回值！
+	void traversal(TreeNode* cur,int tar){
+		tmp.push_back(cur->val);// 不管3721先把当前节点加入到临时路径结果tmp中！
+		if(!cur->left && !cur->right){
+			// 只有 遍历到根节点才算是一条有效的路径！(因为题目就是要找完整的从根节点到叶子节点的路径！)
+			if(tar < 0)return;
+			else if(tar == 0){
+				res.push_back(tmp);// 保存结果
+				return;
+			}
+		}
+		// 左不空就继续向左子树遍历找从根节点到叶子的路径！
+		if(cur->left){
+			tar -= cur->left->val;
+			traversal(cur->left,tar);
+			tar += cur->left->val;// 回溯！
+			tmp.pop_back();
+		}
+		// 右不空就继续向右子树遍历找从根节点到叶子的路径！
+		if(cur->right){
+			tar -= cur->right->val;
+			traversal(cur->right,tar);
+			tar += cur->right->val;// 回溯！
+			tmp.pop_back();
+		}
+	}
+    vector<vector<int>> FindPath(TreeNode* root,int expectNumber) {
+		if(root==nullptr)return {};// 先处理特殊case！
+		res.clear();
+		tmp.clear();
+		traversal(root,expectNumber-root->val);
+		return res;
+    }
+};
+```
 
