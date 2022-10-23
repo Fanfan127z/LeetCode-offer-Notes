@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《6》==道题：
+### 目前累计总共有==《8》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4565,7 +4565,7 @@ public:
 
 
 
-#### <7> [JZ26-树的子结构]()
+#### <7> [JZ34-二叉树中和为某一值的路径（二）](https://www.nowcoder.com/practice/b736e784e3e34731af99065031301bca?tpId=265&tqId=39236&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
 
 这个题目命名在leetcode上面已经do得很熟悉了，但是就是在牛客上没写好思路，思路不完整！！！
 
@@ -4611,4 +4611,31 @@ public:
     }
 };
 ```
+
+
+
+
+
+#### <8> [JZ50-第一个只出现一次的字符](https://www.nowcoder.com/practice/1c82e8cf713b4bbeb2a5b31cf5b0417c?tpId=265&tqId=39248&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这么简单的题目我都没do出来！我人傻了都！！！
+
+```c++
+// time:O(n*2)==O(n),n是字符串的长度,单独遍历了2次整个字符串！
+// space:O(1),虽说使用了哈希表的额外空间，但是该哈希表只会存放字母！即便是算上大小写字母加起来都只有52种！因此O(52)==O(1),是常量级的空间！
+class Solution {
+public:
+    int FirstNotRepeatingChar(string str) {
+        // 哈希表
+        unordered_map<char,int> hmap;
+        for(char& ch : str)hmap[ch]++;
+        for(int i = 0;i < str.size();++i){
+            if(hmap[str[i]] == 1)return i;
+        }
+        return -1;
+    }
+};
+```
+
+
 
