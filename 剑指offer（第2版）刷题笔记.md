@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《8》==道题：
+### 目前累计总共有==《10》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4638,4 +4638,81 @@ public:
 ```
 
 
+
+
+
+
+
+
+
+#### <9> [JZ82-二叉树中和为某一值的路径（一）](https://www.nowcoder.com/practice/1c82e8cf713b4bbeb2a5b31cf5b0417c?tpId=265&tqId=39248&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目和<7> 差不多！不一定需要遍历整棵二叉树！只要找到一条从根节点到叶子节点的路径，该路径上的节点值的和==tar即可了！
+
+```c++
+class Solution {
+public:
+    bool traversal(TreeNode* cur,int tar){
+        // 因为找到从根节点到叶子节点路径上节点值的和==tar的就直接返回即可
+        // 不一定需要遍历完整棵二叉树！
+        if(!cur->left && !cur->right){
+            if(tar == 0)return true;
+            return false;
+        }
+        if(cur->left){
+            if(traversal(cur->left,tar-cur->left->val))return true;
+        }
+        if(cur->right){
+            if(traversal(cur->right,tar-cur->right->val))return true;
+        }
+        return false;
+    }
+    bool hasPathSum(TreeNode* root, int sum) {
+        if(root == nullptr)return false;
+        return traversal(root,sum-root->val);
+    }
+};
+```
+
+
+
+
+
+#### <10> [JZ82-二叉树中和为某一值的路径（三）](https://www.nowcoder.com/practice/965fef32cae14a17a8e86c76ffe3131f?tpId=265&tqId=39291&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目和之前两个二叉树某路径和的题目有一点点不一样，so应该这么do！！！
+
+```c++
+/**
+ * struct TreeNode {
+ *	int val;
+ *	struct TreeNode *left;
+ *	struct TreeNode *right;
+ *	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    int res = 0;
+    int FindPath(TreeNode* root, int sum) {
+        // write code here
+        if(root == nullptr)return res;// 其实返回什么在这里并不重要！
+        // 因为不知道以哪个节点为树的根节点时能够找到路径和==sun的路径
+        // 因此从上到下-前序遍历一次这棵树来搜这样符合题目意思的路径！
+        traversal(root,sum);// 中,看以当前节点为根节点是树是否能找到这样的路径！
+        FindPath(root->left,sum);// 左,看以当前节点的left节点为根节点是树是否能找到这样的路径！
+        FindPath(root->right,sum);// 右,看以当前节点的right节点为根节点是树是否能找到这样的路径！
+        return res;// 最后返回结果！
+    }
+    void traversal(TreeNode* cur,int tar){
+        // if(tar - cur->val < 0 || cur==nullptr)return;
+        if(cur==nullptr)return;// 递归函数的终止条件！
+        // 中 左 右
+        if(tar - cur->val == 0)res++;
+        // 继续往左右子节点来看是否能够再找到这样的路径！
+        traversal(cur->left,tar - cur->val);
+        traversal(cur->right,tar - cur->val);
+    }
+};
+```
 
