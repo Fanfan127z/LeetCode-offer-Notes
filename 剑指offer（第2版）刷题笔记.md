@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《10》==道题：
+### 目前累计总共有==《12》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4610,6 +4610,35 @@ public:
 		return res;
     }
 };
+
+// 版本2：（我个人觉得这样子更好理解，画个图就能理解了！）
+class Solution {
+private:
+	vector<vector<int>> res;
+	vector<int> tmp;
+public:
+	void traversal(TreeNode* cur,int tar){
+		tmp.push_back(cur->val);
+		if(!cur->left && !cur->right){
+			if(tar - cur->val == 0)res.push_back(tmp);	
+			return;
+		}
+		if(cur->left){
+			traversal(cur->left,tar - cur->val);
+			tmp.pop_back();
+		}
+		if(cur->right){
+			traversal(cur->right,tar - cur->val);
+			tmp.pop_back();
+		}
+	}
+    vector<vector<int>> FindPath(TreeNode* root,int expectNumber) {
+		if(root == nullptr)return {};
+		res.clear();tmp.clear();
+		traversal(root,expectNumber);
+		return res;
+    }
+};
 ```
 
 
@@ -4639,17 +4668,12 @@ public:
 
 
 
-
-
-
-
-
-
-#### <9> [JZ82-二叉树中和为某一值的路径（一）](https://www.nowcoder.com/practice/1c82e8cf713b4bbeb2a5b31cf5b0417c?tpId=265&tqId=39248&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+#### <9> [JZ82-二叉树中和为某一值的路径（一）](https://www.nowcoder.com/practice/508378c0823c423baa723ce448cbfd0c?tpId=265&tqId=39278&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
 
 这个题目和<7> 差不多！不一定需要遍历整棵二叉树！只要找到一条从根节点到叶子节点的路径，该路径上的节点值的和==tar即可了！
 
 ```c++
+// 版本1:（官方answer）
 class Solution {
 public:
     bool traversal(TreeNode* cur,int tar){
@@ -4670,6 +4694,28 @@ public:
     bool hasPathSum(TreeNode* root, int sum) {
         if(root == nullptr)return false;
         return traversal(root,sum-root->val);
+    }
+};
+
+// 版本2：（我自己认为这样写更容易理解，具体直接拿题目的例子来画个图就ok的了！）
+class Solution {
+public:
+    bool traversal(TreeNode* cur,int tar){
+        if(!cur->left && !cur->right){
+            if(tar - cur->val == 0)return true;
+            return false;
+        }
+        if(cur->left){
+            if(traversal(cur->left,tar - cur->val))return true;
+        }
+        if(cur->right){
+            if(traversal(cur->right,tar - cur->val))return true;
+        }
+        return false;
+    }
+    bool hasPathSum(TreeNode* root, int sum) {
+        if(root == nullptr)return false;
+        return traversal(root,sum);
     }
 };
 ```
@@ -4714,5 +4760,82 @@ public:
         traversal(cur->right,tar - cur->val);
     }
 };
+```
+
+
+
+
+
+#### <11> [JZ76-删除链表中重复的节点](https://www.nowcoder.com/practice/fc533c45b73a41b0b44ccba763f866ef?tpId=265&tqId=39270&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目我在leetcode上面do过了，但是就是忘记思路了！！！看的牛客官方的题解才do出来的！
+
+```c++
+// time:O(n),n是list节点总数，只遍历了一遍all的节点！
+// space:O(1),没使用额外辅助空间，只开辟了临时指针变量，是常量级空间
+class Solution {
+public:
+    ListNode* deleteDuplication(ListNode* pHead) {
+        if(pHead == nullptr)return pHead;// 处理特殊case
+        ListNode* dummyNode = new ListNode(-1);
+        dummyNode->next = pHead;
+        ListNode* cur = dummyNode;
+        while(cur->next && cur->next->next){
+            if(cur->next->val == cur->next->next->val){
+                int tmp = cur->next->val;
+                while(cur->next && cur->next->val == tmp){
+                    cur->next = cur->next->next;// 去重！跳过重复的节点
+                }
+            }else{
+                cur = cur->next;
+            }
+        }
+        return dummyNode->next;
+    }
+};
+```
+
+
+
+
+
+#### <12> [JZ81-调整数组顺序使奇数位于偶数前面（二）](https://www.nowcoder.com/practice/0c1b486d987b4269b398fee374584fc8?tpId=265&tqId=39274&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+个人认为我自己写的代码比牛客网官方的answer好！！！
+
+```c++
+// time:O(n),n是原数组长度，遍历了原数组各个元素一遍！
+// sapce:O(1),没有使用额外的辅助空间！
+class Solution {
+public:
+    // 这个题目不使用额外空间才是真正难的地方！
+    vector<int> reOrderArrayTwo(vector<int>& array) {
+        // 先处理特殊case
+        if(array.size() == 0)return {};
+        // 奇数放前面，偶数放后面
+        int odd = 0;// 奇数的idx
+        for(int i = 0;i < array.size();++i){
+            if(array[i] % 2 == 1){// 奇数
+                std::swap(array[odd++],array[i]);
+            }
+            // 偶数 不do任何事情 
+        }
+        return array;
+    }
+};
+```
+
+
+
+
+
+
+
+#### <13> [JZ81-调整数组顺序使奇数位于偶数前面（二）]()
+
+
+
+```c++
+
 ```
 
