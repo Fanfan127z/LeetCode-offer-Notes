@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《12》==道题：
+### 目前累计总共有==《15》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -4831,11 +4831,184 @@ public:
 
 
 
-#### <13> [JZ81-调整数组顺序使奇数位于偶数前面（二）]()
+#### <13> [JZ54-二叉搜索树的第k个节点](https://www.nowcoder.com/practice/57aa0bab91884a10b5136ca2c087f8ff?tpId=265&tqId=39251&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
 
-
+这个题目我自己do出来了，不难的，但没有牛客官网的答案那么好（我个人认为）
 
 ```c++
+// way1:(我自己写的answer)
 
+// time:O(n),n是BT的节点总数，all的节点都遍历了一遍了！
+// space:O(n),栈空间的最大深度是二叉树退化为list的时候，此时栈空间最多占用O(n)
+class Solution {
+public:
+    vector<int> v;
+    void mid(TreeNode* cur){
+        if(cur==nullptr)return;
+        // 左中右
+        mid(cur->left);
+        v.push_back(cur->val);
+        mid(cur->right);
+    }
+    int KthNode(TreeNode* proot, int k) {
+        // 先暴力法来deal问题！
+        if(proot == nullptr)return -1;
+        v.clear();
+        mid(proot);
+        // 当k不符合条件时也需要返回-1！
+        if(k - 1 >= v.size())return -1;
+        return v[k-1];
+    }
+};
+// way2:(牛客官方的answer)
+
+// time:O(n),n是BT的节点数，all的节点都遍历了一遍
+// space:O(n),最坏情况下BST会退化为list，那么此时最多使用的栈空间就是O(n)
+
+class Solution {
+public:
+    int cnt = 0;// 计数，看什么时候到达k个数！
+    // 中序遍历到第k个数就是题目要求的数了！
+    int res = -1;// 保存结果！
+    void mid(TreeNode* cur,int k){
+        if(cur==nullptr || cnt > k)return;
+        // 左  中  右
+        mid(cur->left,k);
+        cnt++;
+        if(cnt == k){
+            res = cur->val;
+            return;
+        }
+        mid(cur->right,k);
+    }
+    int KthNode(TreeNode* proot, int k) {
+       // 思路：
+       /*
+        BST的中序遍历本来就是升序排序了的！
+        利用这一特性，中序遍历BST的同时记录当前遍历到第几个节点来，就可以找到第k个节点，此时这个节点就是第k小的节点！符合题目意思！
+       */
+       if(proot==nullptr)return -1;
+       mid(proot,k);
+       return res;
+    }
+};
+```
+
+
+
+
+
+#### <14> [JZ53-数字在升序数组中出现的次数](https://www.nowcoder.com/practice/70610bf967994b22bb1c26f9ae901fa2?tpId=265&tqId=39266&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目的思路是我见过的比较新奇的一个题！需要好好消化理解！！！拿 arr = [1 2 3 3 3 3 4 5]画个图就明白的了！
+
+```c++
+// time:O(logn),二分法
+// space:O(1)
+class Solution {
+public:
+    int GetNumberOfK(vector<int> data ,int k) {
+        // time de 复杂度是O(logn)
+        // 就是要考察二分法！
+        // 主要logic思路是：
+        // 返回出现k的左右边界的差，就是k出现的次数了！
+        return binary_s(data,k+0.5)-binary_s(data,k-0.5);
+    }
+        int binary_s(vector<int>& data, float k){
+        // 注意！这里必须是float or double
+        // 不然的话没法把k+0.5传入进来do二分！！！
+        int left = 0;
+        int right = data.size() - 1;
+        //二分左右界
+        while(left <= right){
+            int mid = (left + right) / 2;
+            if(data[mid] < k)
+                left = mid + 1;
+            else if(data[mid] > k)
+                right = mid - 1;
+        }
+        return left;
+    }
+};
+```
+
+
+
+#### <15> [JZ57-和为S的两个数字](https://www.nowcoder.com/practice/390da4f7a00f44bea7c2f3d19491311b?tpId=265&tqId=39254&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+ 这个题目我在leetcode上面do过了，当时根本没看答案，但是现在要看下答案才知道能够这么来do！
+
+```c++
+// way1:哈希表法
+
+// time：O(n),n是数组长度！最坏情况下是遍历整个数组一次！
+// sapce:O(n),哈希表最坏情况下占用数组空间是O(n)
+class Solution {
+public:
+    vector<int> FindNumbersWithSum(vector<int> array,int sum) {
+        // 先处理特殊case
+        if(array.size()==0)return {};
+        // 用哈希表来do！
+        unordered_map<int,int> hashMap;
+        for(int& num : array){
+            int tmp = sum - num;
+            if(hashMap.find(tmp)==hashMap.end()){
+                hashMap[num]++;
+            }else return {num,tmp};
+        }
+        return {};
+    }
+};
+// way2:双指针法
+
+// time：O(n),n是数组长度！最坏情况下是：左或者右指针遍历整个数组一次！
+// sapce:O(1),常量级空间
+class Solution {
+public:
+    vector<int> FindNumbersWithSum(vector<int> array,int sum) {
+        // 先处理特殊case
+        if(array.size()==0)return {};
+        // 用双指针来do
+        int l=0,r=array.size()-1;
+        while(l<r){
+            int tmp = array[l]+array[r];
+            if(tmp < sum)l++;
+            else if(tmp > sum)r--;
+            else return {array[l],array[r]};
+        }
+        return {};
+    }
+};
+```
+
+
+
+
+
+#### <16> [JZ66-构建乘积数组](https://www.nowcoder.com/practice/94a4d381a68b47b7a8bed86f2975db46?tpId=265&tqId=39261&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3Fpage%3D2%26tpId%3D13%26type%3D265&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目我在leetcode上面do过好多次了，但是还是不记得思路！！！
+
+```c++
+// time:O(n*2)==O(n),遍历了数组A两次！
+// space:O(1),除了数组res是必要的返回数组空间外，没有使用额外的辅助空间了！
+// 思路：
+class Solution {
+public:
+    vector<int> multiply(const vector<int>& A) {
+        int size = A.size();
+        if(size==0)return {};
+        vector<int> res(size,1);
+        for(int i=1;i<size;++i){
+            res[i] = res[i-1]*A[i-1];
+        }
+        int tmp = 1;
+        for(int i=size-1;i>=0;--i){
+            res[i] *= tmp;
+            tmp *= A[i];
+        }
+        return res;
+    }
+};
 ```
 
