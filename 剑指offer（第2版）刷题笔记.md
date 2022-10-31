@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《15》==道题：
+### 目前累计总共有==《17》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -5007,6 +5007,34 @@ public:
             res[i] *= tmp;
             tmp *= A[i];
         }
+        return res;
+    }
+};
+```
+
+
+
+#### <17> [JZ45-把数组排成最小的数](https://www.nowcoder.com/practice/8fecd3f8ba334add803bf2a06af1b993?tpId=265&tqId=39246&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目我用回溯法是能够do出来，但是题目测试用例有3个超时了，时间复杂度有点高！so直接看牛客网答案来学习思路！
+
+这个题目之前在leetcode上面也见识过，但就是想不起来还能够这么do的！你拿numbers = [3,11]这个数组来验证一下这份代码就能完全明白了！ 
+
+```c++
+class Solution {
+public:
+    string PrintMinNumber(vector<int> numbers) {
+        // 先处理特殊case
+        int size = numbers.size();
+        if(size==0)return "";
+        vector<string> strs;
+        for(int& num : numbers)strs.push_back(to_string(num));
+        // 先do自定义排序，x+y < y+x (x,y都是字符串),只要满足该条件，最后排序出来的字符串数组就是数字和最小的字符串数组了！
+        std::sort(strs.begin(),strs.end(),[](string& x,string& y){
+            return x+y < y+x;
+        });
+        string res = "";// 保存结果字符串
+        for(string str : strs)res += str;
         return res;
     }
 };
