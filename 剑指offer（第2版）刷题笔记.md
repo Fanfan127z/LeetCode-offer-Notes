@@ -5040,3 +5040,118 @@ public:
 };
 ```
 
+
+
+
+
+#### <18> [JZ14-剪绳子](https://www.nowcoder.com/practice/57d85990ba5b440ab888fc72b0751bf8?tpId=265&tqId=39218&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+真的搞不懂这个题目怎么do，我看了B站好几个讲解的视频还有题解，都搞不懂！！！直接背下来吧这个思路！（面试前多回顾我这份笔记即可了！）
+
+```c++
+// time:O(n*2),n是绳子原长度
+// space:O(n+1)==O(n)
+// 这个题目我怎么看题解和视频都看不懂，只能背下来了！！！
+class Solution {
+public:
+    int cutRope(int n) {
+        // m <= n
+        if(n <= 3)return n-1;// 因为一定要剪成m段，而m是大于1的
+        // 也即是必须至少剪为2段，也即至少剪一次的意思！
+        vector<int> dp(n+1,0);
+        dp[0] = 0;
+        dp[1] = 1;// 长度为1的绳子剪完后最大乘积是1
+        dp[2] = 2;// 长度为2的绳子剪完后最大乘积是2
+        dp[3] = 3;// 长度为3的绳子剪完后最大乘积是3
+        dp[4] = 4;// 长度为4的绳子剪完后最大乘积是4
+        for(int i=5;i<=n;++i){
+            for(int j=1;j<i;++j){
+                // 要么不剪，要么剪成 长为(j) 和另一段 长为(i-j) 的子绳！然后取其乘积最大值即可！
+                dp[i] = max(dp[i],dp[i-j]*j);
+            }
+        }
+        return dp[n];
+    }
+};
+```
+
+
+
+#### <19> [JZ49-丑数](https://www.nowcoder.com/practice/57d85990ba5b440ab888fc72b0751bf8?tpId=265&tqId=39218&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目说模拟题，但是思路确实很NB-PLUS的！！！牛客网的answer比leetcode上面的那些傻逼题解清晰多了也容易理解多了！
+
+直接拿index==7，求第7个丑数来画图就能理解下面的这份代码了！（这个题目还是蛮不错的！）
+
+```c++
+class Solution {
+public:
+    int GetUglyNumber_Solution(int index) {
+        //排除0
+        if(index == 0)
+            return 0; 
+        //要乘的因数
+        vector<int> factors = {2, 3, 5}; 
+        //去重
+        unordered_map<long, int> mp; 
+        //小顶堆
+        priority_queue<long, vector<long>, greater<long>> pq; 
+        //1先进去
+        mp[1] = 1; 
+        pq.push(1);
+        long res = 0;
+        for(int i = 0; i < index; i++){ 
+            //每次取最小的
+            res = pq.top(); 
+            pq.pop();
+            for(int j = 0; j < 3; j++){
+                //乘上因数
+                long next = res * factors[j]; 
+                //只取未出现过的
+                if(mp.find(next) == mp.end()){  
+                    mp[next] = 1;
+                    pq.push(next);
+                }
+            }
+        }
+        return (int)res;
+    }
+};
+
+// 下面的代码版本是我自己画图理解之后自己写出来的(这个自己理解过的代码带注释的版本才是真正属于我自己的题解)：
+// 注意：因为题目的测试用例中的数字do了乘积后有超过int最大范围的整数，因此需要用long 来保存临时变量和结果的值！（以防止越界）
+class Solution {
+public:
+    int GetUglyNumber_Solution(int index) {// 求的是第index个丑数的值
+        // 先排除特殊case 0
+        if(index == 0)return 0;
+        // 用优先队列 来记录丑数 
+        priority_queue<long,vector<long>,greater<long>> pq;
+        // 用hashMap来去重（给丑数去重）！
+        unordered_map<long,int> hashMap;
+        // 先把第一个丑数1push到上面这2种数据结构中
+        pq.push(1);
+        hashMap[1] = 1;
+        long res = 0;// res变量用于保存第n个丑数
+        vector<int> factors = {2,3,5};// 构成丑数的3个质因子！
+        // 因为all的丑数都是由{2,3,5}的倍数构成
+        // 即{2*x,3*x,5*x}都属于丑数，毫无例外！因此可以根据此规律来找第n个丑数！
+        // 外for用于找第(i)个丑数
+        for(int i = 1;i <= index;++i){
+            res = pq.top();
+            pq.pop();
+            // 内for用于求新的一轮丑数，同时记录新丑数的值并do去重操作。
+            for(int j = 0;j < 3;++j){
+                long next = res * factors[j];// 求新一轮的丑数值
+                if(hashMap.find(next)==hashMap.end()){// 记录新丑数到hashMap和priority_queue中！
+                    // 找不到该丑数才push进来（去重）
+                    hashMap[next] = 1;// 1表示出现一次的意思！就是记录该丑数出现了一下而已！没有什么特殊的含义！
+                    pq.push(next);// 同时也push进优先级队列中
+                }
+            }
+        }
+        return int(res);
+    }
+};
+```
+
