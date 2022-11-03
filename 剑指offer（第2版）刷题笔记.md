@@ -4167,7 +4167,7 @@ public:
 
 注意：**我个人认为太过于难的题目我就不总结了！**
 
-### 目前累计总共有==《17》==道题：
+### 目前累计总共有==《20》==道题：
 
 虽然这个题目很简单，思路我也基本背下来了，但是还是不能把**双指针的细节**弄好！
 
@@ -5077,7 +5077,7 @@ public:
 
 
 
-#### <19> [JZ49-丑数](https://www.nowcoder.com/practice/57d85990ba5b440ab888fc72b0751bf8?tpId=265&tqId=39218&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+#### <19> [JZ49-丑数](https://www.nowcoder.com/practice/6aa9e04fc3794f68acf8778237ba065b?tpId=265&tqId=39247&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
 
 这个题目说模拟题，但是思路确实很NB-PLUS的！！！牛客网的answer比leetcode上面的那些傻逼题解清晰多了也容易理解多了！
 
@@ -5120,6 +5120,12 @@ public:
 
 // 下面的代码版本是我自己画图理解之后自己写出来的(这个自己理解过的代码带注释的版本才是真正属于我自己的题解)：
 // 注意：因为题目的测试用例中的数字do了乘积后有超过int最大范围的整数，因此需要用long 来保存临时变量和结果的值！（以防止越界）
+	// 解题思路：
+    // 使用哈希表和优先级队列来do这个事情！
+    // 因为all的丑数都是{2,3,5}的倍数！
+    // 即丑数都是：{2*x,3*x,5*x}
+    // 那么从小到大返回第n个丑数
+    // 每一轮都抽取丑数集合中的最小值即可（这个可用优先级队列来实现，因为优先级队列的top()就能返回其中存放到all对象的最小or最大的那个）
 class Solution {
 public:
     int GetUglyNumber_Solution(int index) {// 求的是第index个丑数的值
@@ -5151,6 +5157,41 @@ public:
             }
         }
         return int(res);
+    }
+};
+```
+
+
+
+
+
+#### <20> [JZ48-最长不含重复字符的子字符串](https://www.nowcoder.com/practice/48d2ff79b8564c40a50fa79f9d5fa9c7?tpId=265&tqId=39289&rp=1&ru=/exam/oj/ta&qru=/exam/oj/ta&sourceUrl=%2Fexam%2Foj%2Fta%3FtpId%3D13&difficulty=undefined&judgeStatus=undefined&tags=&title=)
+
+这个题目我记得我在leetcode上面do了好多次了，但是我就是不记得解题思路！稍微拿string = "abcabcbb"; 来画个图你都能马上理解这个代码的！！！不难！
+
+```c++
+// time:O(n),n是原字符串长度
+// sapce:O(n),使用了辅助的哈希表空间，最坏情况下整个原字符串都是不重复的，因此哈希表的长度就是字符串长度==n！
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        // 注意：这里求的是子串（必须要连续），而非子序列（可以不连续）
+        int res = 0;// 保存结果
+        // 思路：滑动窗口+哈希表（推荐使用）
+        // 先来一个哈希表，用于统计字符元素出现的次数
+        // 然后，使用双指针法维护一个滑动窗口，一旦出现重复（hashMap可判断该字符是否重复）就窗口左指针右移动，否则右指针右移动！
+        // 简单来说解题思路是：用哈希表统计每个滑动窗口内构成的字符串的无重复子串的各个字符出现的次数，然后双指针维护一个滑动窗口！注意：右指针先移动，左指针只有出现重复时才更新！
+        unordered_map<char,int> hm;
+        for(int left = 0,right = 0;right < s.size();++right){
+            // 先让窗口右指针右移动，并用哈希表统计当前窗口内对应的这个字符的出现次数！
+            hm[s[right]]++;
+            while(hm[s[right]] > 1){
+                hm[s[left++]]--;// 窗口左指针右移动，且hm中统计的该字符的出现次数-1！
+            }
+            // 每一轮都统计最长不重复子字符串的长度！
+            res = max(res,right-left+1);
+        }
+        return res;
     }
 };
 ```
