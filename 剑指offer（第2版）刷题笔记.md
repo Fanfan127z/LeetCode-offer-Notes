@@ -103,7 +103,7 @@ public:
 /*
 	总体思路：借助一个stack来do，模拟压栈和出栈的case即可！
 	压栈就按照pushed数组的顺序压入即可，然后同时将st.top()头部元素与popped元素依次顺序do比较
-	if st.top()头部元素与popped的当前元素
+	if st.top()头部元素与popped的当前元素 相等 的话
 		st.pop()并且让指向popped的下标后移
 	else 继续遍历pushed数组并将其元素push进st中
 	最终判断st是否为空即可判断是否为正确的压栈出栈操作序列了！
@@ -188,7 +188,7 @@ public:
         // key:存放的是旧的list节点
         // val:存放的是新的list节点
         Node* cur = head;
-        while(cur){// 这一步只是new处全新的list的节点而已！
+        while(cur){// 这一步只是new出来all的全新的list的节点而已！
             hashMap[cur] = new Node(cur->val);
             cur = cur->next;
         }
@@ -236,6 +236,32 @@ public:
         tmp.clear();
         reverse_inOrder(root);
         return tmp[k-1];// 下标是从0开始，而第几个元素时从1开始计数的！so要减去1！
+    }
+};
+// 版本2：（我完全理解了上面的代码之后，自己写出来的）
+class Solution {
+public:
+    int res = 0,cnt = 0;
+    void midT(TreeNode* cur,int k){
+        // 递归终止条件
+        if(cur==nullptr)return ;
+        // 单层递归logic
+        // 右 中 左 的logic
+        midT(cur->right,k);// left
+        // mid
+        cnt++;
+        if(cnt == k){
+            res = cur->val;// 这就是BST的第k大节点的值！
+            return;
+        }
+        midT(cur->left,k);// right
+    }
+    int kthLargest(TreeNode* root, int k) {
+        // 倒中序遍历，找到的第k个节点其实就是BST的第k大节点的值了！
+        if(root==nullptr)return -1;
+        res=0,cnt=0;
+        midT(root,k);
+        return res;
     }
 };
 ```
@@ -300,7 +326,7 @@ public:
         int i = 0,size = nums.size();
         while(i < size - 1){
             if(nums[i] == nums[i+1])i = i+1+1;
-            else {
+            else {// 当nums[size-1]这个位置的元素是单个的时候，这个循环中无法判断这个位置的元素是否是单个的，因为直接跳过了！so再return之前应该再判断下这个位置是否已经把ret2填满了！
                 if(ret1 == -1){
                     ret1 = nums[i];
                     i++;
@@ -470,7 +496,7 @@ public:
         // 本题为通过学习评论区高赞答案：通过列表格法do出来！
         // 先计算左下三角，再计算右上三角的乘积和！
         /*
-        举例子画图说明：    1 2 3 4 5
+        举例子画图说明：   a = [1 2 3 4 5]
         1  1  <== ① 2 3 4 5 ==> 120 ==> 1x120(t == 1x5x4x3x2) == 120  
         2  1  <== 1 ① 3 4 5 ==> 60  ==> 1x60(t == 1x5x4x3)  == 60
         3  2  <== 1 2 ① 4 5 ==> 20  ==> 2x20(t == 1x5x4)  == 40
@@ -481,11 +507,11 @@ public:
             res[i] = res[i-1] * a[i-1];
         }
         int t = 1;
-        for(int i = size-2;i >= 0;--i){// 不管index==size-1号的值！因为已经定了！
-            // 这里从后往前来求右上三级的乘积和太妙了吧！
+        for(int i = size-1;i >= 0;--i){// 不管index==size-1号的值！因为已经定了！
+            // 这里从后往前来求右上三角度的乘积和太妙了吧！
             // 还有这下面的2行codes都非常棒！
-            t *= a[i+1];
             res[i] *= t;
+            t      *= a[i];
         }
         return res;
     }
@@ -519,6 +545,26 @@ public:
         return {-1,-1};
     }
 };
+// way2:哈希表法
+// time:O(n),最坏情况下需要遍历整个数组nums一遍！
+// space:O(n),使用了辅助空间哈希表，最坏情况下遍历了整个nums数组都没有找到一对和为target的2个数字，此时哈希表就会存放nums数组的all元素！
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // 一看就是要用哈希表来do！
+        unordered_map<int,int> hashMap;
+        int size = nums.size();
+        for(int& num : nums){
+            auto it = hashMap.find(target-num);
+            if(it==hashMap.end()){
+                hashMap[num]++;
+            }else{
+                return {it->first,num};
+            }
+        }
+        return {-1,-1};
+    }
+};
 ```
 
 
@@ -534,13 +580,14 @@ class Solution {
 public:
     vector<vector<int>> res;
     vector<int> tmp;
-    void backtracking(int sum,int tar,int startIdx){
+    void backtracking(int sum,int tar,int startIdx){// 当然，一开始的sum序列和和为0！
         if(sum == tar){
             if(tmp.size() > 1)res.push_back(tmp);
             return;
         }
         for(int i = startIdx;i < tar;++i){
-            if(!tmp.empty() && tmp.back() != i - 1)break;
+            // !tmp.empty() 这个条件前置是为了保证tmp.back()不出异常！
+            if(!tmp.empty() && tmp.back() != i - 1)break;// 剪枝：非递增序列就无需暴力递归搜索求和了，因为本身就不符合题目的条件了！！！
             // 不是连续序列子数组也剪枝！这行代码就保证了结果数组是连续的！
             if(sum + i > tar)break;// 剪枝！ 
             sum += i;
@@ -555,6 +602,7 @@ public:
     vector<vector<int>> findContinuousSequence(int target) {
         // 这个题目应该是需要用到暴力搜索回溯法！
         res.clear();tmp.clear();
+        // 当然，一开始的sum序列和和为0！
         backtracking(0,target,1);// startIdx == 1是因为0不算入累加的行列中!
         // 用回溯法弄出来all从[1~target)数组中和为target的字数组后
         //（注：就算是一个数字tar == tar了也不满足题意！因为题目说了是至少要有2个元素的和==tar！）
@@ -575,25 +623,57 @@ class Solution {
 public:
     // 学carl哥之前教我的双指针法来do这套题！
     string reverseWords(string s) {
-        // double pointer!
-        int l = 0,size = s.size(),r = size - 1;
-        // 1-先去除原字符串前后的多余空格子
-        // 2-再一个一个解析word即可了！
-        while(l < size && s[l] == ' ')l++;
+       	// 1-先去除原字符串前后的多余空格子
+        // 2-再一个一个解析word 加入到反转字符串中 即可了！
+        int l = 0,r = s.size()-1;
+        while(l < s.size() && s[l] == ' ')l++;
         while(r >= 0 && s[r] == ' ')r--;
-        string retStr = "";
-        while(l <= r){
-            int tmpIdx = r;// tmpIdx用以解析单个单词
-            while(tmpIdx >= l && s[tmpIdx] != ' ')tmpIdx--;// 解析单个单词出来
-            auto word = s.substr(tmpIdx+1,r - tmpIdx);
-            retStr += word;
+        int i = r;
+        string ret = "";
+        while(i >= l){// 注意：这里的遍历指针i一定是要求>=l,而不是>=0的,因为实际string的有效（非空格子起头or结尾）的部分是从s.substr[l,r]这部分的字符串！
+            int j = i;
+            while(j >= l && s[j] != ' ')j--;// 解析单个单词出来
+            string word = s.substr(j+1,i-j);
             // 将解析好的单个单词输入到结果字符串中（因为是从后往前遍历原字符串，因此可以借此构造出新的原字符串的反向字符串了！）
-            if(tmpIdx > l)retStr.push_back(' ');// 补1个空格子
-            while(tmpIdx >= l && s[tmpIdx] == ' ')tmpIdx--;
-            // 去除中间各个单词之间的多余的空格子
-            r = tmpIdx;// 更新右指针
+            ret += word;
+            if(j >= l)ret += " ";
+            // 去掉s中间的多余空格子
+            while(j >= l && s[j] == ' ')j--;
+            i = j;// 更新i下标并do下一轮循环！
         }
-        return retStr;
+        return ret;
+    }
+};
+// 版本2：（从前往后，其实和上面的从后往前其实是一样的套路！）
+// time:O(n)
+// space:O(n),n是原字符串长度，使用了辅助空间stack存放了加起来长度共为n的words
+class Solution {
+public:
+    string reverseWords(string s) {
+        // 当然，因为题目给出的测试用例中的字符串包含前面或者后面有多个空余空格子的case，题目要求反转结果string中要去掉这些多余的空格子！
+        int l = 0,r = s.size()-1;
+        while(l<s.size() && s[l]==' ')l++;
+        while(r>=0 && s[r]==' ')r--;
+        int i = l,size = r+1;
+        if(size == 0)return "";
+        stack<string> stk;// 辅助栈空间
+        while(i < size){
+            int j = i;
+            while(j < size && s[j] != ' ')j++;// 找每一个单词word
+            string word = s.substr(i,j-i);
+            stk.push(word);
+            if(j < size)stk.push(" ");
+            // 去掉string中间的多余空格子！
+            while(j < size && s[j] == ' ')j++;
+            i = j ;// 更新i do 下一轮反转word的操作！
+        }
+        // 把stack中存放到各个word和空格子弄进去结果string中！
+        string ret = "";
+        while(!stk.empty()){
+            ret += stk.top();
+            stk.pop();
+        }
+        return ret;
     }
 };
 ```
@@ -624,6 +704,8 @@ public:
             if(nums[i] == 0)minIdx++;// 找到最小牌的index
             else if(nums[i] == nums[i+1])return false;// 非0重复就不构成顺子，提取返回false
         }
+        // max == nums[size-1].代表5个牌的最大值
+        // min == nums[minIdx].代表5个牌的最小值（0值除外）
         return nums[size-1] - nums[minIdx] < 5;
         // 最大牌 - 最小牌 必须小于5才能构成顺子！
     }
@@ -639,11 +721,11 @@ public:
 然后看了题解才知道一种叫做==逻辑符号短路效应==的小知识点！
 
 ```c++
-/*	本题用来著名的逻辑符号的短路效应：
+/*	本题用了著名的逻辑符号的短路效应：
 	逻辑运算符的短路效应：
 	if(A && B) 若 A 为 false ，则 B 的判断不会执行（即短路），直接判定 A && B 为 false
 	if(A || B)若 A 为 true ，则 B 的判断不会执行（即短路），直接判定 A || B 为 true
-	本题需要实现 “当 n=1时终止递归” 的需求，可通过短路效应实现。
+	本题需要实现 “当 n=1时终止递归” 的递归终止条件这个需求，可通过 短路效应 来实现。
  	n > 1 && sumNums(n - 1) // 当 n = 1 时 n > 1 不成立 ，此时 “短路” ，终止后续递归
 */
 class Solution {
@@ -652,7 +734,7 @@ public:
     int sumNums(int n) {
         // 因为不能用乘除法，还有各种if else while 和for，因此都不能用了！
         // 只能用递归不停地调用自己来累加！
-        bool t = (n > 1) && sumNums(n-1);// 若n==1甚至小于1了，就无需再开多一个递归函数了！
+        bool t = (n > 1) && sumNums(n-1);// 若n==1甚至小于1了，就无需再开多一个递归函数了！// 当n不>1时就不会继续do递归的操作了！so 短路效应牛逼！
         res += n;
         return res;
     }
@@ -670,6 +752,8 @@ public:
 这道题目其实和[lc8. 字符串转换整数 (atoi)](https://leetcode.cn/problems/string-to-integer-atoi/)是一样的！复制黏贴过去也能AC！！！
 
 ```c++
+// time:O(n),n是str的长度
+// space:O(10)==O(1),使用了辅助哈希表空间，但是只用了10个常数级空间，so和O(1)是一回事！
 class Solution {
 public:
     unordered_map<char,int> hashMap;
@@ -682,20 +766,19 @@ public:
         int PorN = 1;// 1表示正数 -1表示负数
         // 先去除字符串str前面多余的空格子！
         while(idx < size && str[idx] == ' ')idx++;
-        // 判断特殊case + 符号判断
-        if(idx < size){
-            if(hashMap.find(str[idx]) == hashMap.end()){
-                if(str[idx] == '-')PorN = -1;
-                else if(str[idx] == '+')PorN = 1;
-                else return 0;// 在数字前面若出现了非数字字符那这个题目默认就是返回0的
-                idx++;
-            }
+        // 判断特殊case + 符号判断（判断第一个非空字符的正负性）
+        if(idx < size && hashMap.find(str[idx]) == hashMap.end()){
+            if(str[idx] == '-')PorN = -1;
+            else if(str[idx] == '+')PorN = 1;
+            else return 0;// 在数字前面若出现了非数字字符那这个题目默认就是返回0的
+            idx++;// 跳到str中真正以数字字符开头的下标处！
         }
+        // 若第一个非空字符不是+ or -号，则直接跳过上面的if语句直接到下面的循环中计算数字大小了！
         long long res = 0;
         // 用long long作为res的类型是防止lc后台测试用例数字过大导致移除错误！
         for(;idx < size;++idx){
             int digit = str[idx] - '0';// 将每一个数字字符转换为对应的int数字(-'0'技巧)
-            if(digit < 0 || digit > 9)break;// 遇到数字后面是非数字字符也马上break跳出计数循环
+            if(digit < 0 || digit > 9)break;// str的中间存在非法字符，不能继续do循环计算数字和的处理了！
             res = res * 10 + digit;// 计数
             if(res * PorN >= INT_MAX)return INT_MAX;
             if(res * PorN <= INT_MIN)return INT_MIN;
@@ -714,6 +797,7 @@ public:
 ```c++
 // time:O(n),n是原数组nums的大小！
 // space:O(1)
+// 贪心算法，非常地巧妙！！！
 class Solution {
 public:
     int maxSubArray(vector<int>& nums) {
@@ -776,6 +860,28 @@ public:
         bool rightIsBST = traversal(p,fenGeIdx,r-1);
         // 进而判断整棵树是否为BST
         return leftIsBST && rightIsBST;
+    }
+    bool verifyPostorder(vector<int>& postorder) {
+        return traversal(postorder,0,postorder.size()-1);
+    }
+};
+// 我自己写出来的
+class Solution {
+public:
+    bool traversal(const vector<int>& p,int l,int r){
+        // 因为BST的后续遍历到最后一个节点必须是当前树的根节点！
+        // 而[start,第一个大于root节点的前一个节点]必须是BST的左区间
+        // [第一个大于root节点,root节点的前一个节点]必须是BST的右区间
+        // 根据这2个规则就能递归判断出这个序列是否是某个BST的后续遍历序列了！
+        if(l >= r)return true;// 剩下一个数字肯定符合BST的左右区间的定义了！
+        int i = l;
+        while(p[i] < p[r])i++;//跳出循环后==> [l,i-1]是BST的左区间
+        int tmp = i;
+        while(p[tmp] > p[r])tmp++;//跳出循环后==> [i,r-1]是BST的右区间
+        if(tmp != r)return false;
+        bool left = traversal(p,l,i-1);
+        bool right = traversal(p,i,r-1);
+        return left && right;
     }
     bool verifyPostorder(vector<int>& postorder) {
         return traversal(postorder,0,postorder.size()-1);
@@ -1003,7 +1109,7 @@ public:
 
 思路：
 
-分治算法：（通过下面这2个例子详细你自己也能够悟出来的了！）
+分治算法：（通过下面这2个详细例子你自己也能够悟出来的了！）
 
 x ^16 <=> x^16 -> x^8 * x^8 -> x^4 * x^4 * x^4 * x^4  ->  x^2 * x^2 * x^2 * x^2 * x^2 * x^2 * x^2 * x^2
 
@@ -1020,7 +1126,8 @@ x ^20 <=> x^20 -> x^10 * x^10-> x^5 * x^5 * x^5 * x^5 ->  x^2 * x^2 * x *x^2 * x
 // 空间：O(logn)，递归的层数，这是由于递归的函数调用会使用栈空间。
 class Solution {
 public:
-    double myPowHelper(double x, uint32_t n) {
+    // 其实这个代码时有问题的，因为没有返回值！
+    double myPowHelper(double x, uint32_t n) {// 在leetcode上面写这个题目的话不需要谢伟uint32_t,但是牛客就要改一下！
         // uint32_t来表示n才能不越界！NB！！！当然你甚至可以用uint64_t也ok！
         if(n == 0)return 1.0;// 当n递减到0时就代表x到最后了！就直接x个1.0完事了！
         if(n % 2 != 0){
@@ -1030,6 +1137,13 @@ public:
             double half = myPowHelper(x,n / 2);
             return half * half;
         }
+    }
+    // 其实这个代码才算完全没问题的！
+    double dfs(double x,int n){
+        if(n == 0)return 1.0;// 任何数的0次方==1.0！
+        double half = dfs(x,n / 2);
+        if(n % 2 != 0)return half * half * x; 
+        return half * half;// else if(n % 2 == 0)return half * half; 
     }
     double myPow(double x,int n){
         // 必须要考虑到n == 0 和 x == 1时这种特殊case！
@@ -1205,6 +1319,8 @@ private:
 public:
     int reversePairs(vector<int>& nums) {
         //使用归并排序法来do这道题目！
+        // 求逆序对数，则必须是使用 归并排序 的过程！
+		// 先递归分割，后递归合并的同时计算逆序对数！！！
         vector<int> tmp;
         int size = nums.size();
         tmp.resize(size);// 必须要提前resize，否则lc就是会给你判错！
@@ -1323,7 +1439,7 @@ void merge(int* arr,int* tmpArr,int left,int mid,int right)
         tmpArr[pos++] = arr[r_pos++];
     }
     // 把临时数组中合并后的元素复制回原来的数组
-    for(int i = 0;i <= right;++i){
+    for(int i = left;i <= right;++i){
         arr[i] = tmpArr[i];
     }
 }
@@ -1401,10 +1517,8 @@ public:
 ```c++
 // 滑动窗口（双指针法）,这是学的y总的！
 // 得自己按照lc给出的特例，比如第一个特例，拿来跟着我这份代码画个图就行了！
-/*
-	time：O(n)
-	space:O(n)
-*/
+// time:O(n),n是原字符串的长度，1个for循环遍历原字符串的时间复杂度就是O(n)
+// space:O(n),n是原字符串的长度，最坏情况下，uset需要保存n个字符！
 class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
@@ -1448,6 +1562,8 @@ public:
 
 
 
+
+
 #### <1> [BM2-链表内指定区间反转](https://www.nowcoder.com/practice/b58434e200a648c589ca2063f1faf58c?tpId=295&tqId=654&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
 
 <img src="C:/Users/11602/Desktop/LeetCodeOfferNotes/git/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E6%88%AA%E5%9B%BE/1.jpg" alt="1" style="zoom: 50%;" />
@@ -1474,7 +1590,7 @@ public:
             prev = cur;
             cur = cur->next;
         }
-        // 从m反转到n
+        // 给从m到n位置的all节点do反转！
         for(int i = m;i < n;++i){
             ListNode* tmp = cur->next;
             cur->next = tmp->next;
@@ -1500,12 +1616,6 @@ public:
 // time:O(n),最坏情况下需要遍历整个list，space:O(1),只占用了常量指针内存空间！
 class Solution {
 public:
-    /**
-     * 
-     * @param head ListNode类 
-     * @param k int整型 
-     * @return ListNode类
-     */
     // 思路：每k个节点do一次部分反转list的操作即可！
     // 		运用到了属于BM2中部分反转list的操作！(个人认为我自己基于BM2这个题解写的思路比BM3要好！)
     ListNode* reverseKGroup(ListNode* head, int k) {
@@ -1560,6 +1670,53 @@ public:
             cur = tmp;
         }
         return prev;
+    }
+};
+// version-2
+class Solution {
+public:
+    // 思路：每k个节点do一次部分反转list的操作即可！
+    // 		运用到了属于BM2中部分反转list的操作！(个人认为我自己基于BM2这个题解写的思路比BM3要好！)
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        int size = 0;
+        ListNode* cur = head;
+        // 求list size
+        while(cur){
+            cur = cur->next;
+            size++;
+        }
+        // 处理下特殊case：size == k 时应该让list全反转
+        if(size == k){
+            head = subReverseFun(head,1,size);// list全反转
+            return head;
+        }
+        // size != k 时应该让list部分反转
+        int i = 1;
+        while(1){// 从1开始算，让区间中的每k个节点的区间中的节点进行反转！
+            if( (i+k-1) >= size)break;
+            head = subReverseFun(head,i,i+k-1);
+            i += k;
+        }
+        return head;
+    }
+    ListNode* subReverseFun(ListNode* head,int m,int n){
+        ListNode* dummyNode = new ListNode(-1);
+        dummyNode->next = head;
+        ListNode* prev = dummyNode;
+        ListNode* cur = head;
+        // 找到m位置的节点
+        for(int i = 1;i < m;++i){
+            prev = cur;
+            cur = cur->next;
+        }
+        // 从m反转到n
+        for(int i=m;i<n;++i){
+            ListNode* tmp = cur->next;
+            cur->next = tmp->next;
+            tmp->next = prev->next;
+            prev->next = tmp;
+        }
+        return dummyNode->next;
     }
 };
 ```
@@ -1959,7 +2116,7 @@ public:
                 l = mid + 1;
             }
         }
-        return r;// 最后r停留的位置就是峰值的index了！(根据样例画个图就出来了)
+        return r;// or return l; 均!ok最后左指针l或者右指针r停留的位置均是峰值的index了！(根据样例画个图就出来了)
     }
 };
 ```
@@ -2005,7 +2162,7 @@ public:
             
             // 先 截取v1的数字用来比较
             // 但是这个已遍历完成的字符串对应的'.'号之间的数字可认为默认是0了！
-            long long num1 = 0;// 怕测试用例的整数太大了用int or long不够放！so 用long long
+            long long num1 = 0;// 怕测试用例的整数太大了用int or long不够放(表示不了)！so 用long long
             // 计算v1中 每个.号之间的数字：（用来比大小）
             while(i < n1 && version1[i] != '.'){
                 num1 = num1 * 10 + (version1[i] - '0');// 其中，str[i] - '0' == 该字符对于的阿拉伯数字！
@@ -2712,7 +2869,7 @@ class Solution {
 
 
 
-#### <24> [BM50-三数之和](https://www.nowcoder.com/practice/20ef0972485e41019e39543e8e895b7f?tpId=295&tqId=745&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### <24> [BM50-三数之和](https://www.nowcoder.com/practice/345e2ed5f81d4017bbb8cc6055b0b711?tpId=295&tqId=731&ru=%2Fpractice%2F20ef0972485e41019e39543e8e895b7f&qru=%2Fta%2Fformat-top101%2Fquestion-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%E7%AE%97%E6%B3%95%E7%AF%87%26topicId%3D295)
 
 这个三数之和还得是看carl哥的思路do出来比较容易理解！！！
 
@@ -2972,7 +3129,7 @@ class Solution {
 
 
 
-#### ==<29>== [BM61-矩阵最长递增路径](https://www.nowcoder.com/practice/0c9664d1554e466aa107d899418e814e?tpId=295&tqId=1024684&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
+#### ==<29>== [BM61-矩阵最长递增路径](https://www.nowcoder.com/practice/7a71a88cdf294ce6bdf54c899be967a2?tpId=295&tqId=1076860&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D295)
 
 这个题目我是看的leetCode一个大佬写的优美题解写出来的！这个代码非常地优美！但是真的蛮难想的！且需要考虑**非常全面**才行！
 
@@ -3051,7 +3208,7 @@ public:
 // time:O(2*n)==O(n),n是字符串的长度，因为遍历了两遍整个字符串，so时间复杂度是O(n*2)
 // 虽然while里面还嵌套了别的while循环，但是这些内while循环的时间复杂度 相比外while的时间复杂度是非常小的，so可忽略不计！
 // space:O(n),辅助空间stack和辅助字符串newS的长度就是n！
-// 这是我自己想的，我个人认为比牛客官方answer还好！但是我没有一次过ac！还是写了改改了写好几遍才能ac的！
+// 这是我自己想的，我个人认为比牛客官方answer还好！但是我没有第一次就ac过！还是写了改改了写好几遍才能ac的！
 class Solution {
   public:
     string trans(string s, int n) {
@@ -3243,19 +3400,15 @@ public:
 
 
 
-
-
-
-
 #### <35> [BM92-最长无重复子数组](https://www.nowcoder.com/practice/b56799ebfd684fb394bd315e89324fb4?tpId=295&tqId=1008889&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
 
-这个题目说看的牛客网官方answer才知道要这么干才能do出来！
+这个题目是看的牛客网官方answer才知道要这么干才能do出来！
 
 ```c++
 // time:O(n),n是arr长度，最坏情况下需要遍历整个arr一次
 // space：O(n),最坏情况下哈希表需要存储n个pair！
 // 解题思路：
-// 双指针 + map的方法 维护一个滑动窗口，在双指针遍历的同时，顺便记录 最长无重复元素子数组 的长度！
+// 双指针 + hashmap的方法 维护一个滑动窗口，在双指针遍历的同时，顺便记录 最长无重复元素子数组 的长度！
 class Solution {
 public:
     int maxLength(vector<int>& arr) {
@@ -3279,8 +3432,6 @@ public:
     }
 };
 ```
-
-
 
 
 
@@ -3317,10 +3468,6 @@ public:
     }
 };
 ```
-
-
-
-
 
 
 
@@ -3363,11 +3510,11 @@ public:
 
 
 
-
-
-#### ==<38>== [BM90-最小覆盖子串](https://www.nowcoder.com/practice/3d8d6a8e516e4633a2244d2934e5aa47?tpId=295&tqId=2284579&ru=/exam/oj&qru=/ta/format-top101/question-ranking&sourceUrl=%2Fexam%2Foj)
+#### ==<38>== [BM90-最小覆盖子串](https://www.nowcoder.com/practice/c466d480d20c4c7c9d322d12ca7955ac?tpId=295&tqId=670&ru=%2Fpractice%2F3d8d6a8e516e4633a2244d2934e5aa47&qru=%2Fta%2Fformat-top101%2Fquestion-ranking&sourceUrl=%2Fexam%2Foj)
 
 这种其实就是**简单的hard题目**，其实还是能够deal的！把思路想清楚后再记忆一下还是能够do的！
+
+==还是蛮难想的这个思路！想到了还是不太容易写出bug free的codes的！！！==
 
 滑动窗口（本质上就是用unordered_map + 双指针来do）
 
@@ -3468,12 +3615,6 @@ public:
     }
 };
 ```
-
-
-
-
-
-
 
 
 
@@ -3605,16 +3746,12 @@ public:
         dp[0] = 0,dp[1] = 0;// 由于第0个 or 第1个台阶无需爬都可以到达，因此这2个台阶的最小代价就是0了！
         for(int i = 2;i <= size;++i){
             dp[i] = min(dp[i-1] + cost[i-1],dp[i-2]+cost[i-2]);// 递归公式！
-            // 第i个台阶的最小花费是 第i-1个台阶的最小花费 + 第i-2个台阶的最小花费！
+            // 第i个台阶的最小花费是 第i-1个台阶的最小花费 或者 第i-2个台阶的最小花费！
         }
         return dp[size];
     }
 };
 ```
-
-
-
-
 
 
 
@@ -3819,8 +3956,8 @@ public:
             // 1:要么和 变大了
             // 2:要么和 变小了
             // 要是变大了就取dp[i-1]+array[i]作为当前dp[i]的连续子数组和的最大值
-            // 要是变小了就截断当前的连续子数组，重新开始求子数组和的最大值！顾名思义就是取array[i]作为当前的dp[i]了！
-            dp[i] = max(dp[i-1]+array[i],array[i]);
+            // 要是变小了就截断当前的连续子数组，重新开始求子数组和的最大值！顾名思义就是取array[i]作为当前的以i为止的连续子数组的最大和==dp[i]了！
+            dp[i] = max(dp[i-1]+array[i],array[i]);// 求和大就统计起来，否则就重新统计当前值为以当前i下标为止的连续子数组的最大和！
             maxSum = max(maxSum,dp[i]);// 统计结果最大和！
         }
         return maxSum;
@@ -3847,10 +3984,12 @@ public:
             for(int j = 0; j < i; j++){
                 //可能j不是所需要的最大的，因此需要dp[i] < dp[j] + 1
                 if(arr[i] > arr[j] && dp[i] < dp[j] + 1) {
+                    // 因为此时判断出来下标为i为止的数组中是存在递增的子序列了！
+                    // 那么长度可+1！即下标为i为止的数组中的最长递增的子序列长度是时候+1了！
                     //i点比j点大，理论上dp要加1
                     dp[i] = dp[j] + 1; 
                     //找到最大长度
-                    res = max(res, dp[i]); 
+                    res = max(res, dp[i]); // 更新结果
                 }
             }
         }
@@ -3868,7 +4007,8 @@ public:
         vector<int> dp(n,1);
         // 数组中，最少都会有一个元素的子序列算是严格递增的！
         // so dp数组都初始化为1！
-        int res = 0;// 保存最长严格递增的子序列的长度！
+        if(n==0)return 0;// 先处理下特殊case！
+        int res = 1;// 保存最长严格递增的子序列的长度！因为最少数组都会有一个元素，那么符合题意的子序列长度最少都是1了！
         for(int i = 1;i < n;++i){
             for(int j = 0;j < i;++j){
                 // arr[j]有可能并不是使得dp[i]成为当前递增子序列长度最大的那个元素！
@@ -3887,10 +4027,6 @@ public:
     }
 };
 ```
-
-
-
-
 
 
 
@@ -3964,6 +4100,33 @@ public:
             begin--,end++;// 继续进行下一轮中心扩展法！
         }
         return end - begin - 1;// 返回使用中心扩展法获得的最长回文子串的长度！
+    }
+};
+// leetcode way2:
+class Solution {
+public:
+    pair<int,int> p;// 保存最终最长的回文子串的begin和end下标
+    pair<int,int> tmp;// 保存临时最长回文子串的begin和end下标
+    string longestPalindrome(string s) {
+       int n = s.size();
+       if(n==0)return "";// 先处理下特殊case
+       for(int i = 0;i < n-1;++i){
+           mid(s,i,i);// 以当前字符为中心进行奇数次扩展
+           mid(s,i,i+1);// 以当前字符以及其右边的一个字符为中心，进行偶数次扩展！
+           // 因为不止有 "aba" or "abcdcba"这种奇数次回文串！
+           // 还会有 "abba" or "abccba" 这种偶数次的回文串！
+       }
+       return s.substr(p.first,p.second - p.first+1);
+    }
+    void mid(const string& s,int begin,int end){
+        while(begin >= 0 && end < s.size() && s[begin] == s[end]){
+            tmp.first = begin,tmp.second = end;
+            if(p.second - p.first < tmp.second - tmp.first){
+                p.second = tmp.second;
+                p.first = tmp.first;
+            }
+            end++,begin--;// 继续下一轮找更长的回文子串！
+        }
     }
 };
 ```
@@ -4150,12 +4313,6 @@ public:
     }
 };
 ```
-
-
-
-
-
-
 
 
 
@@ -5196,3 +5353,8 @@ public:
 };
 ```
 
+
+
+
+
+#### <21> [JZ48-]()
